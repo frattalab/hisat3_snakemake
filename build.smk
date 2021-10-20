@@ -28,7 +28,7 @@ GENOME_FA = config['fasta']
 
 rule all_hisat3n:
     input:
-        expand(hisat_outdir + "{name}.sam",name = SAMPLE_NAMES)
+        expand(hisat_outdir + "{name}.sam",name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.sorted.sam", name = SAMPLE_NAMES)
 
 rule run_histat3n_pe:
@@ -57,7 +57,6 @@ rule run_histat3n_pe:
         --base-change {params.baseChange}\
         --threads {threads}
         """
-
 rule sort_histat:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
