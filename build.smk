@@ -54,7 +54,7 @@ rule run_histat3n_pe:
         -1 {input.one} \
         -2 {input.two} \
         -q \
-        -S {params.outputPrefix}
+        -S {params.outputPrefix} \
         --base-change {params.baseChange}\
         --threads {threads}
         """
