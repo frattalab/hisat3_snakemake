@@ -7,7 +7,7 @@ end_type: "pe"
 #if the provided path string is RELATIVE, the string will be joined with project_top_level to form the output directory path
 #if the provided path string is ABSOLUTE, the output for the given rule will be stored in the provided string (NOT WITHIN project_top_level)
 #In practice leaving as relative defaults is best option...
-fastp_trimmed_output_folder: fastp_trimmed/
+fastp_trimmed_output_folder: fastp_trimmed_whoops/
 merged_fastq_folder: merged_fastq/
 
 histat3n_output_folder: histat3n/
