@@ -29,7 +29,8 @@ GENOME_FA = config['fasta']
 rule all_hisat3n:
     input:
         expand(hisat_outdir + "{name}.sam",name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.sorted.sam", name = SAMPLE_NAMES)
+        expand(hisat_outdir + "{name}.sorted.sam", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "{name}.conversion.tsv", name = SAMPLE_NAMES)
 
 rule run_histat3n_pe:
     wildcard_constraints:
@@ -79,10 +80,10 @@ rule conversion_table:
     input:
         hisat_outdir + "{name}.sorted.sam"
     output:
-        hisat_outdir + "{name}.sorted.sam"
+        hisat_outdir + "{name}.conversion.tsv"
     params:
         genomeFA = GENOME_FA,
-        outputPrefix = os.path.join(hisat_outdir + "{name}.tsv"),
+        outputPrefix = os.path.join(hisat_outdir + "{name}.conversion.tsv"),
         baseChange = "T,C"
     threads:
         4
