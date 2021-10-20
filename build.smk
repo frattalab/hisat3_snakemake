@@ -27,8 +27,8 @@ GENOME_DIR = "/SAN/vyplab/vyplab_reference_genomes/hisat-3n/human/raw"
 
 rule all_hisat3n:
     input:
-        expand(hisat_outdir + "{name}.sam",name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.sorted.sam", name = SAMPLE_NAMES)
+        expand(hisat_outdir + "{name}.sam",name = SAMPLE_NAMES)
+        #expand(hisat_outdir + "{name}.sorted.sam", name = SAMPLE_NAMES)
 
 rule run_histat3n_pe:
     wildcard_constraints:
@@ -38,7 +38,7 @@ rule run_histat3n_pe:
         one = lambda wildcards: get_processed_fastq(wildcards.name, pair=1),
         two = lambda wildcards: get_processed_fastq(wildcards.name, pair=2)
     output:
-        expand(hisat_outdir + "{name}.sam",name = SAMPLE_NAMES)
+        hisat_outdir + "{name}.sam"
     params:
         genomeDir = GENOME_DIR,
         outputPrefix = os.path.join(hisat_outdir + "{name}.sam"),
