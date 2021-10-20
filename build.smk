@@ -24,11 +24,12 @@ SAMPLE_NAMES = SAMPLES['sample_name'].tolist()
 
 
 GENOME_DIR = "/SAN/vyplab/vyplab_reference_genomes/hisat-3n/human/raw"
+GENOME_FA = config['fasta']
 
 rule all_hisat3n:
     input:
         expand(hisat_outdir + "{name}.sam",name = SAMPLE_NAMES)
-        #expand(hisat_outdir + "{name}.sorted.sam", name = SAMPLE_NAMES)
+        expand(hisat_outdir + "{name}.sorted.sam", name = SAMPLE_NAMES)
 
 rule run_histat3n_pe:
     wildcard_constraints:
@@ -54,5 +55,44 @@ rule run_histat3n_pe:
         -q \
         -S {params.outputPrefix}
         --base-change {params.baseChange}\
+        --threads {threads}
+        """
+
+rule sort_histat:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        hisat_outdir + "{name}.sam"
+    output:
+        hisat_outdir + "{name}.sorted.sam"
+    threads:
+        4
+    shell:
+        """
+        t=/scratch0/$USER/$RANDOM
+        mkdir -p $t
+        samtools sort {input} -o {output} -T $t
+        """
+
+rule sort_histat:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        hisat_outdir + "{name}.sorted.sam"
+    output:
+        hisat_outdir + "{name}.sorted.sam"
+    params:
+        genomeFA = GENOME_FA,
+        outputPrefix = os.path.join(hisat_outdir + "{name}.tsv"),
+        baseChange = "T,C"
+    threads:
+        4
+    shell:
+        """
+        /SAN/vyplab/alb_projects/tools/hisat-3n/hisat-3n-table \
+        --alignments {input} \
+        --ref {params.genomeFA} \
+        --output-name {params.outputPrefix} \
+        --base-change {params.baseChange} \
         --threads {threads}
         """

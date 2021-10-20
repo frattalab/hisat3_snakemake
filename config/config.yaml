@@ -11,3 +11,5 @@ fastp_trimmed_output_folder: fastp_trimmed_whoops/
 merged_fastq_folder: merged_fastq/
 
 histat3n_output_folder: histat3n/
+
+fasta: /SAN/vyplab/vyplab_reference_genomes/sequence/human/gencode/GRCh38.primary_assembly.genome.fa
