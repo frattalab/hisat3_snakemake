@@ -41,7 +41,6 @@ rule run_histat3n_pe:
         expand(hisat_outdir + "{name}.sam",name = SAMPLE_NAMES)
     params:
         genomeDir = GENOME_DIR,
-        outTmpDir = os.path.join(star_outdir + "{name}_tmpdir"),
         outputPrefix = os.path.join(hisat_outdir + "{name}.sam"),
         baseChange = "T,C"
     threads:
