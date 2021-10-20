@@ -13,7 +13,7 @@ include: "helpers.py"
 
 #make sure the output folder for STAR exists before running anything
 hisat_outdir = get_output_dir(config["project_top_level"], config['histat3n_output_folder'])
-os.system("mkdir -p {0}".format(star_outdir))
+os.system("mkdir -p {0}".format(hisat_outdir))
 
 merged_outdir = get_output_dir(config['project_top_level'], config['merged_fastq_folder'])
 
