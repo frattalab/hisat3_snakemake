@@ -73,7 +73,7 @@ rule sort_histat:
         samtools sort {input} -o {output} -T $t
         """
 
-rule sort_histat:
+rule conversion_table:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
