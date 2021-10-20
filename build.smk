@@ -5,10 +5,10 @@ include: "helpers.py"
 
 # RULE ORDER DIRECTIVE
 # if paired end, use the paired end rule to run, if single end use the single end rule to run
-if config['end_type'] == "pe":
-    ruleorder: run_star_pe > run_star_se
-else:
-    ruleorder: run_star_se > run_star_pe
+# if config['end_type'] == "pe":
+#     ruleorder: run_star_pe > run_star_se
+# else:
+#     ruleorder: run_star_se > run_star_pe
 
 
 #make sure the output folder for STAR exists before running anything
