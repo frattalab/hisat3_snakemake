@@ -34,7 +34,7 @@ rule run_histat3n_pe:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        generated_index = GENOME_DIR,
+        generated_index = GENOME_DIR + ".3n.CT.1.ht2",
         one = lambda wildcards: get_processed_fastq(wildcards.name, pair=1),
         two = lambda wildcards: get_processed_fastq(wildcards.name, pair=2)
     output:
@@ -47,8 +47,8 @@ rule run_histat3n_pe:
         4
     shell:
         """
-        /SAN/vyplab/alb_projects/tools/hisat-3n/hisat-3n -x \
-        {params.genomeDir} \
+        /SAN/vyplab/alb_projects/tools/hisat-3n/hisat-3n \
+        -x {params.genomeDir} \
         -1 {input.one} \
         -2 {input.two} \
         -q \
