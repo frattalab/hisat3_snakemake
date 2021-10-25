@@ -128,7 +128,7 @@ rule split_toBedGraph:
         plusR = temp(hisat_outdir + "{name}.+.rate.bedgraph"),
         minusR = temp(hisat_outdir + "{name}.-.rate.bedgraph")
     params:
-        awkRate = "awk  -F '\t' '{if($7+$5 ==0) $4 = 0; else $4 = ($5)/($7+$5)} {print $1 '\t' $2 '\t' $2 + 1 '\t' $4}'"
+        awkRate = """awk  -F "\t}" "{if($7+$5 ==0) $4 = 0; else $4 = ($5)/($7+$5)} {print $1 "\\t" $2 "\\t" $2 + 1 "\\t" $4}"""
     shell:
         """
         awk  -F "\t" '{print $1 "\t" $2 "\t" $2 + 1 "\t" $5}' {input.plus} > {output.plusC}
