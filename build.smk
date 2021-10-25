@@ -32,10 +32,10 @@ rule all_hisat3n:
     input:
         expand(hisat_outdir + "{name}.sorted.sam", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.conversion.tsv", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.count.+.bw", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.count.-.bw", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.rate.+.bw", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.rate.-.bw",name = SAMPLE_NAMES)
+        expand(hisat_outdir + "{name}.count.plus.bw", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "{name}.count.minus.bw", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "{name}.rate.plus.bw", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "{name}.rate.minus.bw",name = SAMPLE_NAMES)
 
 rule run_histat3n_pe:
     wildcard_constraints:
@@ -123,10 +123,10 @@ rule split_toBedGraph:
         plus = hisat_outdir + "{name}.+.txt",
         minus = hisat_outdir + "{name}.-.txt"
     output:
-        plusC = temp(hisat_outdir + "{name}.+.count.bedgraph"),
-        minusC = temp(hisat_outdir + "{name}.-.count.bedgraph"),
-        plusR = temp(hisat_outdir + "{name}.+.rate.bedgraph"),
-        minusR = temp(hisat_outdir + "{name}.-.rate.bedgraph")
+        plusC = temp(hisat_outdir + "{name}.plus.count.bedgraph"),
+        minusC = temp(hisat_outdir + "{name}.minus.count.bedgraph"),
+        plusR = temp(hisat_outdir + "{name}.plus.rate.bedgraph"),
+        minusR = temp(hisat_outdir + "{name}.minus.rate.bedgraph")
     shell:
         """
         countAwk.sh {input.plus} {output.plusC}
@@ -139,15 +139,15 @@ rule sortBedGraph:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        plusC = hisat_outdir + "{name}.+.count.bedgraph",
-        minusC = hisat_outdir + "{name}.-.count.bedgraph",
-        plusR = hisat_outdir + "{name}.+.rate.bedgraph",
-        minusR = hisat_outdir + "{name}.-.rate.bedgraph"
+        plusC = hisat_outdir + "{name}.plus.count.bedgraph",
+        minusC = hisat_outdir + "{name}.minus.count.bedgraph",
+        plusR = hisat_outdir + "{name}.plus.rate.bedgraph",
+        minusR = hisat_outdir + "{name}.minus.rate.bedgraph"
     output:
-        plusC = temp(hisat_outdir + "{name}.+.count.sorted.bedgraph"),
-        minusC = temp(hisat_outdir + "{name}.-.count.sorted.bedgraph"),
-        plusR = temp(hisat_outdir + "{name}.+.rate.sorted.bedgraph"),
-        minusR = temp(hisat_outdir + "{name}.-.rate.sorted.bedgraph")
+        plusC = temp(hisat_outdir + "{name}.plus.count.sorted.bedgraph"),
+        minusC = temp(hisat_outdir + "{name}.minus.count.sorted.bedgraph"),
+        plusR = temp(hisat_outdir + "{name}.plus.rate.sorted.bedgraph"),
+        minusR = temp(hisat_outdir + "{name}.minus.rate.sorted.bedgraph")
     shell:
         """
         LC_COLLATE=C sort -k1,1 -k2,2n {input.plusC} > {output.plusC}
@@ -160,15 +160,15 @@ rule bedGraphtoBW:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        plusC = hisat_outdir + "{name}.+.count.sorted.bedgraph",
-        minusC = hisat_outdir + "{name}.-.count.sorted.bedgraph",
-        plusR = hisat_outdir + "{name}.+.rate.sorted.bedgraph",
-        minusR = hisat_outdir + "{name}.-.rate.sorted.bedgraph"
+        plusC = hisat_outdir + "{name}.plus.count.sorted.bedgraph",
+        minusC = hisat_outdir + "{name}.minus.count.sorted.bedgraph",
+        plusR = hisat_outdir + "{name}.plus.rate.sorted.bedgraph",
+        minusR = hisat_outdir + "{name}.minus.rate.sorted.bedgraph"
     output:
-        plusC = hisat_outdir + "{name}.count.+.bw",
-        minusC = hisat_outdir + "{name}.count.-.bw",
-        plusR = hisat_outdir + "{name}.rate.+.bw",
-        minusR = hisat_outdir + "{name}.rate.-.bw"
+        plusC = hisat_outdir + "{name}.count.plus.bw",
+        minusC = hisat_outdir + "{name}.count.minus.bw",
+        plusR = hisat_outdir + "{name}.rate.plus.bw",
+        minusR = hisat_outdir + "{name}.rate.minus.bw"
     shell:
         """
         /SAN/vyplab/alb_projects/tools/bedGraphToBigWig {input.plusC} \
