@@ -35,7 +35,7 @@ rule all_hisat3n:
         expand(hisat_outdir + "{name}.count.+.bw", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.count.-.bw", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.rate.+.bw", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.rate.-.bw")
+        expand(hisat_outdir + "{name}.rate.-.bw",name = SAMPLE_NAMES)
 
 rule run_histat3n_pe:
     wildcard_constraints:
