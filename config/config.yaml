@@ -1,4 +1,5 @@
-sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/foursu_full_experiment.csv
+#sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/foursu_full_experiment.csv
+sampleCSVpath: final_hop:/SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/
 #master directory in which output from individual rules is stored (within individual subdirectories, unless overriden below)
 project_top_level:  /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/
 end_type: "pe"
@@ -13,3 +14,4 @@ merged_fastq_folder: merged_fastq/
 histat3n_output_folder: histat3n/
 
 fasta: /SAN/vyplab/vyplab_reference_genomes/sequence/human/gencode/GRCh38.primary_assembly.genome.fa
+fasta_sizes: /SAN/vyplab/vyplab_reference_genomes/sequence/human/gencode/GRCh38.primary_assembly.genome.size
