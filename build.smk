@@ -116,6 +116,7 @@ rule split_conversion:
         awk -F'\t' '{ print > "{params.name}" $3 ".txt" }' {input}
         """
 
+
 rule split_toBedGraph:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
