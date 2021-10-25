@@ -1,7 +1,7 @@
 #sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/foursu_full_experiment.csv
 sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/foursu_full_experiment_kd.csv
 #master directory in which output from individual rules is stored (within individual subdirectories, unless overriden below)
-project_top_level:  /SAN/vyplab/NYGC_ALSFTD/temporary_4su/histat3n
+project_top_level:  /SAN/vyplab/NYGC_ALSFTD/temporary_4su/
 end_type: "pe"
 
 #below you can specify the names of rulesubdirectories
