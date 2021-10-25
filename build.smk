@@ -131,7 +131,6 @@ rule split_toBedGraph:
         awkRate = """awk  -F "\t}" "{if($7+$5 ==0) $4 = 0; else $4 = ($5)/($7+$5)} {print $1 "\\t" $2 "\\t" $2 + 1 "\\t" $4}"""
     shell:
         """
-        echo {params.awkRate}
         awk  -F "\t" '{print $1 "\t" $2 "\t" $2 + 1 "\t" $5}' {input.plus} > {output.plusC}
         awk  -F "\t" '{print $1 "\t" $2 "\t" $2 + 1"\t" $5}' {input.minus} > {output.minusC}
         # {params.awkRate} {input.plus} > {output.plusR}
