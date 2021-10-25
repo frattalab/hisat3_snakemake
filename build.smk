@@ -165,10 +165,10 @@ rule bedGraphtoBW:
         plusR = hisat_outdir + "{name}.+.rate.sorted.bedgraph",
         minusR = hisat_outdir + "{name}.-.rate.sorted.bedgraph"
     output:
-        plusC = hisat_outdir + "{name}.count.+.bw"),
-        minusC = hisat_outdir + "{name}.count.-.bw"),
-        plusR = hisat_outdir + "{name}.rate.+.bw"),
-        minusR = hisat_outdir + "{name}.rate.-.bw")
+        plusC = hisat_outdir + "{name}.count.+.bw",
+        minusC = hisat_outdir + "{name}.count.-.bw",
+        plusR = hisat_outdir + "{name}.rate.+.bw",
+        minusR = hisat_outdir + "{name}.rate.-.bw"
     shell:
         """
         /SAN/vyplab/alb_projects/tools/bedGraphToBigWig {input.plusC} \
