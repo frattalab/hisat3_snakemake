@@ -131,8 +131,8 @@ rule split_toBedGraph:
         """
         awk  -F "\\t" "{{print $1 "\\t" $2 "\\t" $2 + 1 "\\t" $5}}" {input.plus} > {output.plusC}
         awk  -F "\\t" "{{print $1 "\'t" $2 "\\t" $2 + 1 "\\t" $5}}" {input.minus} > {output.minusC}
-        awk  -F "\t" "{{if($7+$5 ==0) $4 = 0; else $4 = ($5)/($7+$5)}} {{print $1 "\\t" $2 "\\t" $2 + 1 "\\t" $4}} {input.plus} > {output.plusR}
-        awk  -F "\t" "{{if($7+$5 ==0) $4 = 0; else $4 = ($5)/($7+$5)}} {{print $1 "\\t" $2 "\\t" $2 + 1 "\\t" $4}} {input.minus} > {output.minusR}
+        awk  -F "\\t" "{{if($7+$5 ==0) $4 = 0; else $4 = ($5)/($7+$5)}} {{print $1 "\\t" $2 "\\t" $2 + 1 "\\t" $4}} {input.plus} > {output.plusR}
+        awk  -F "\\t" "{{if($7+$5 ==0) $4 = 0; else $4 = ($5)/($7+$5)}} {{print $1 "\\t" $2 "\\t" $2 + 1 "\\t" $4}} {input.minus} > {output.minusR}
         """
 
 rule sortBedGraph:
