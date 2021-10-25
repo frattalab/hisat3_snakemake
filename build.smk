@@ -32,9 +32,9 @@ rule all_hisat3n:
     input:
         expand(hisat_outdir + "{name}.sorted.sam", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.conversion.tsv", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.count.+.bw"),
-        expand(hisat_outdir + "{name}.count.-.bw"),
-        expand(hisat_outdir + "{name}.rate.+.bw"),
+        expand(hisat_outdir + "{name}.count.+.bw", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "{name}.count.-.bw", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "{name}.rate.+.bw", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.rate.-.bw")
 
 rule run_histat3n_pe:
