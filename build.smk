@@ -129,7 +129,7 @@ rule split_toBedGraph:
         minusR = temp(hisat_outdir + "{name}.-.rate.bedgraph")
     shell:
         """
-        countAwk.sh {input.plusC} {output.plusC}
+        countAwk.sh {input.plus} {output.plusC}
         countAwk.sh {input.minus} {output.minusC}
         rateAwk.sh {input.plus} {output.plusR}
         rateAwk.sh {input.minus} {output.minusR}
