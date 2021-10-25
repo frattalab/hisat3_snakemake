@@ -1,0 +1,15 @@
+__default__:
+    h_vmem: 1.9G
+    h_rt:   24:00:00
+    submission_string: " "
+    tmem: 1.9G
+run_histat3n_pe:
+    submission_string: "-pe smp 4 -R y"
+    h_vmem:    6G
+    tmem:   6G
+    h_rt: 72:00:00
+conversion_table:
+    submission_string: "-pe smp 4 -R y"
+    h_vmem:    6G
+    tmem:   6G
+    h_rt: 72:00:00
