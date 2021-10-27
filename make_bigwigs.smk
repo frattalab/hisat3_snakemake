@@ -40,7 +40,7 @@ rule split_conversion:
         outputPrefix = os.path.join(hisat_outdir + "{name}."),
     shell:
         """
-        ./splitAwk.sh {input} {params.outputPrefix}
+        source splitAwk.sh {input} {params.outputPrefix}
         """
 
 
@@ -57,10 +57,10 @@ rule split_toBedGraph:
         minusR = temp(hisat_outdir + "{name}.minus.rate.bedgraph")
     shell:
         """
-        ./countAwk.sh {input.plus} {output.plusC}
-        ./countAwk.sh {input.minus} {output.minusC}
-        ./rateAwk.sh {input.plus} {output.plusR}
-        ./rateAwk.sh {input.minus} {output.minusR}
+        source countAwk.sh {input.plus} {output.plusC}
+        source countAwk.sh {input.minus} {output.minusC}
+        source rateAwk.sh {input.plus} {output.plusR}
+        source rateAwk.sh {input.minus} {output.minusR}
         """
 
 rule sortBedGraph:
