@@ -43,6 +43,30 @@ rule split_conversion:
         source splitAwk.sh {input} {params.outputPrefix}
         """
 
+rule filter_splitPlus:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        temp(hisat_outdir + "{name}.+.txt"),
+    output:
+        temp(hisat_outdir + "{name}.filtered.+.txt"),
+    shell:
+        """
+        source splitAwk.sh {input} {params.outputPrefix}
+        """
+
+rule filter_splitMinus:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        temp(hisat_outdir + "{name}.-.txt")
+    output:
+        temp(hisat_outdir + "{name}.filtered.-.txt")
+    shell:
+        """
+        source splitAwk.sh {input} {params.outputPrefix}
+        """
+
 rule split_toBedGraphRatePlus:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
@@ -131,8 +155,7 @@ rule sortBedGraphPlusRate:
         2
     shell:
         """
-        LC_COLLATE=C sort 
-        --parallel 2 -k1,1 -k2,2n {input.plusR} > {output.plusR}
+        LC_COLLATE=C sort --parallel 2 -k1,1 -k2,2n {input.plusR} > {output.plusR}
         """
 
 rule sortBedGraphMinusRate:
