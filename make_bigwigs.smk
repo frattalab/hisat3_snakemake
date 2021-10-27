@@ -185,7 +185,7 @@ rule bedGraphtoBWPlusRate:
         /SAN/vyplab/alb_projects/tools/bedGraphToBigWig {input.plusR} \
         {CHRMSIZES} {output.plusR}
         """
-        
+
 rule bedGraphtoBWMinusRate:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
@@ -197,4 +197,4 @@ rule bedGraphtoBWMinusRate:
         """
         /SAN/vyplab/alb_projects/tools/bedGraphToBigWig {input.minusR} \
         {CHRMSIZES} {output.minusR}
-        """"
+        """
