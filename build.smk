@@ -38,11 +38,13 @@ rule run_histat3n_pe:
     params:
         genomeDir = GENOME_DIR,
         outputPrefix = os.path.join(hisat_outdir + "{name}.sam"),
+        strandness = config['strandedness']
         baseChange = "T,C"
     threads:
         4
     shell:
         """
+        echo {params.strandedness}
         /SAN/vyplab/alb_projects/tools/hisat-3n/hisat-3n \
         -x {params.genomeDir} \
         -1 {input.one} \
@@ -51,7 +53,7 @@ rule run_histat3n_pe:
         -S {params.outputPrefix} \
         --base-change {params.baseChange} \
         --threads {threads} \
-        --rna-strandness 
+        --rna-strandness {params.strandedness}
         """
 rule sort_histat:
     wildcard_constraints:
