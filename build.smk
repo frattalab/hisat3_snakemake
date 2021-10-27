@@ -81,7 +81,7 @@ rule run_hisat3_se:
         """
         /SAN/vyplab/alb_projects/tools/hisat-3n/hisat-3n \
         -x {params.genomeDir} \
-        -1 {input.one} \
+        -U {input.one} \
         -q \
         -S {params.outputPrefix} \
         --base-change {params.baseChange} \
