@@ -2,7 +2,13 @@ import os
 configfile: "config/config.yaml"
 cluster_config: "config/cluster.yaml"
 include: "helpers.py"
-
+# RULE ORDER DIRECTIVE
+# if paired end, use the paired end rule to run, if single end use the single end rule to run
+if config['end_type'] == "pe":
+	ruleorder: run_hisat3_pe > run_hisat3_se
+else:
+	ruleorder: run_hisat3_se > run_hisat3_pe
+    
 #make sure the output folder for STAR exists before running anything
 hisat_outdir = get_output_dir(config["project_top_level"], config['histat3n_output_folder'])
 os.system("mkdir -p {0}".format(hisat_outdir))
@@ -26,64 +32,63 @@ rule all_hisat3n:
         expand(hisat_outdir + "{name}.sorted.bam", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.sorted.bam.bai", name = SAMPLE_NAMES),
 
-if config['end_type'] == 'pe'
-    rule run_histat3n_alignment:
-        wildcard_constraints:
-            sample="|".join(SAMPLE_NAMES)
-        input:
-            generated_index = GENOME_DIR + ".3n.CT.1.ht2",
-            one = lambda wildcards: get_processed_fastq(wildcards.name, pair=1),
-            two = lambda wildcards: get_processed_fastq(wildcards.name, pair=2)
-        output:
-            temp(hisat_outdir + "{name}.sam")
-        params:
-            genomeDir = GENOME_DIR,
-            outputPrefix = os.path.join(hisat_outdir + "{name}.sam"),
-            strandedness = config['strandedness'],
-            baseChange = "T,C"
-        threads:
-            4
-        shell:
-            """
-            /SAN/vyplab/alb_projects/tools/hisat-3n/hisat-3n \
-            -x {params.genomeDir} \
-            -1 {input.one} \
-            -2 {input.two} \
-            -q \
-            -S {params.outputPrefix} \
-            --base-change {params.baseChange} \
-            --threads {threads} \
-            --rna-strandness {params.strandedness}
-            """
-elif config['end_type'] == 'se'
-    rule run_histat3n_alignment:
-        wildcard_constraints:
-            sample="|".join(SAMPLE_NAMES)
-        input:
-            generated_index = GENOME_DIR + ".3n.CT.1.ht2",
-            one = lambda wildcards: get_processed_fastq(wildcards.name, pair=1),
-            two = lambda wildcards: get_processed_fastq(wildcards.name, pair=2)
-        output:
-            temp(hisat_outdir + "{name}.sam")
-        params:
-            genomeDir = GENOME_DIR,
-            outputPrefix = os.path.join(hisat_outdir + "{name}.sam"),
-            strandedness = config['strandedness'],
-            baseChange = "T,C"
-        threads:
-            4
-        shell:
-            """
-            /SAN/vyplab/alb_projects/tools/hisat-3n/hisat-3n \
-            -x {params.genomeDir} \
-            -1 {input.one} \
-            -2 {input.two} \
-            -q \
-            -S {params.outputPrefix} \
-            --base-change {params.baseChange} \
-            --threads {threads} \
-            --rna-strandness {params.strandedness}
+
+rule run_hisat3_pe:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        generated_index = GENOME_DIR + ".3n.CT.1.ht2",
+        one = lambda wildcards: get_processed_fastq(wildcards.name, pair=1),
+        two = lambda wildcards: get_processed_fastq(wildcards.name, pair=2)
+    output:
+        temp(hisat_outdir + "{name}.sam")
+    params:
+        genomeDir = GENOME_DIR,
+        outputPrefix = os.path.join(hisat_outdir + "{name}.sam"),
+        strandedness = config['strandedness'],
+        baseChange = "T,C"
+    threads:
+        4
+    shell:
         """
+        /SAN/vyplab/alb_projects/tools/hisat-3n/hisat-3n \
+        -x {params.genomeDir} \
+        -1 {input.one} \
+        -2 {input.two} \
+        -q \
+        -S {params.outputPrefix} \
+        --base-change {params.baseChange} \
+        --threads {threads} \
+        --rna-strandness {params.strandedness}
+        """
+
+rule run_hisat3_se:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        generated_index = GENOME_DIR + ".3n.CT.1.ht2",
+        one = lambda wildcards: get_processed_fastq(wildcards.name, pair=1)
+    output:
+        temp(hisat_outdir + "{name}.sam")
+    params:
+        genomeDir = GENOME_DIR,
+        outputPrefix = os.path.join(hisat_outdir + "{name}.sam"),
+        strandedness = config['strandedness'],
+        baseChange = "T,C"
+    threads:
+        4
+    shell:
+        """
+        /SAN/vyplab/alb_projects/tools/hisat-3n/hisat-3n \
+        -x {params.genomeDir} \
+        -1 {input.one} \
+        -q \
+        -S {params.outputPrefix} \
+        --base-change {params.baseChange} \
+        --threads {threads} \
+        --rna-strandness {params.strandedness}
+    """
+
 rule sort_histat:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
