@@ -44,7 +44,6 @@ rule run_histat3n_pe:
         4
     shell:
         """
-        echo {params.strandedness}
         /SAN/vyplab/alb_projects/tools/hisat-3n/hisat-3n \
         -x {params.genomeDir} \
         -1 {input.one} \
