@@ -99,9 +99,11 @@ rule sortBedGraphPlusCount:
         plusC = hisat_outdir + "{name}.plus.count.bedgraph"
     output:
         plusC = temp(hisat_outdir + "{name}.plus.count.sorted.bedgraph")
+    threads:
+        2
     shell:
         """
-        LC_COLLATE=C sort -k1,1 -k2,2n {input.plusC} > {output.plusC}
+        LC_COLLATE=C sort --parallel 2 -k1,1 -k2,2n {input.plusC} > {output.plusC}
         """
 
 rule sortBedGraphMinusCount:
@@ -111,9 +113,11 @@ rule sortBedGraphMinusCount:
         minusC = hisat_outdir + "{name}.minus.count.bedgraph"
     output:
         minusC = temp(hisat_outdir + "{name}.minus.count.sorted.bedgraph")
+    threads:
+        2
     shell:
         """
-        LC_COLLATE=C sort -k1,1 -k2,2n {input.minusC} > {output.minusC}
+        LC_COLLATE=C sort --parallel 2 -k1,1 -k2,2n {input.minusC} > {output.minusC}
         """
 
 rule sortBedGraphPlusRate:
@@ -123,9 +127,26 @@ rule sortBedGraphPlusRate:
         plusR = hisat_outdir + "{name}.plus.rate.bedgraph"
     output:
         plusR = temp(hisat_outdir + "{name}.plus.rate.sorted.bedgraph")
+    threads:
+        2
     shell:
         """
-        LC_COLLATE=C sort -k1,1 -k2,2n {input.plusR} > {output.plusR}
+        LC_COLLATE=C sort 
+        --parallel 2 -k1,1 -k2,2n {input.plusR} > {output.plusR}
+        """
+
+rule sortBedGraphMinusRate:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        plusR = hisat_outdir + "{name}.minus.rate.bedgraph"
+    output:
+        plusR = temp(hisat_outdir + "{name}.minus.rate.sorted.bedgraph")
+    threads:
+        2
+    shell:
+        """
+        LC_COLLATE=C sort --parallel 2 -k1,1 -k2,2n {input.plusR} > {output.plusR}
         """
 
 rule bedGraphtoBWPlusCount:
