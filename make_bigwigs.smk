@@ -40,7 +40,7 @@ rule split_conversion:
         outputPrefix = os.path.join(hisat_outdir + "{name}."),
     shell:
         """
-        awk -F"\t" "{{ print > "{params.outputPrefix}" $3 ".txt" }}" {input}
+        awk -F"\\t" "{{ print > "{params.outputPrefix}" $3 ".txt" }}" {input}
         """
 
 
