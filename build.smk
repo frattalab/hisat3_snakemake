@@ -112,3 +112,16 @@ rule index_bams:
         """
         samtools index {input} -o {output} -T $t
         """
+
+rule tag_bams:
+    input:
+        bam = hisat_outdir + "{name}.sorted.bam",
+        bai = hisat_outdir + "{name}.sorted.bam.bai"
+    output:
+        hisat_outdir + "{name}.sorted.bam.bai"
+    params:
+        pickled = GENOME_FA + '.pickle'
+    shell:
+        """
+        python3 edited_for_transversions.py -b {input.bam} -p {params.pickled}
+        """
