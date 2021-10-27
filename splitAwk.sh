@@ -1,7 +1,7 @@
 #!/bin/bash
 
-input=$2
-prefix=$3
+input=$1
+prefix=$2
 echo "i'm input"
 echo $input
 echo "i'm prefix"
