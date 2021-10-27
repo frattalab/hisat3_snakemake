@@ -103,7 +103,7 @@ rule sortBedGraphPlusCount:
         2
     shell:
         """
-        LC_COLLATE=C sort --parallel 2 -k1,1 -k2,2n {input.plusC} > {output.plusC}
+        LC_COLLATE=C sort -k1,1 -k2,2n {input.plusC} > {output.plusC}
         """
 
 rule sortBedGraphMinusCount:
@@ -117,7 +117,7 @@ rule sortBedGraphMinusCount:
         2
     shell:
         """
-        LC_COLLATE=C sort --parallel 2 -k1,1 -k2,2n {input.minusC} > {output.minusC}
+        LC_COLLATE=C sort -k1,1 -k2,2n {input.minusC} > {output.minusC}
         """
 
 rule sortBedGraphPlusRate:
@@ -146,7 +146,7 @@ rule sortBedGraphMinusRate:
         2
     shell:
         """
-        LC_COLLATE=C sort --parallel 2 -k1,1 -k2,2n {input.plusR} > {output.plusR}
+        LC_COLLATE=C sort -k1,1 -k2,2n {input.plusR} > {output.plusR}
         """
 
 rule bedGraphtoBWPlusCount:
