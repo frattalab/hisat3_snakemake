@@ -4,7 +4,7 @@ import argparse
 import pickle
 
 
-TDP43kd_1_8h.sorted.bam real	123m36.579s
+
 def read_fasta(filename):
     """
     This is a simple function written in base python that
@@ -102,7 +102,12 @@ def main():
         output = ','.join([str(a) for a in matrix])
         record.tags = record.tags + [('RA', output)]
         outfile.write(record)
-    
+
+        if i % 1_000_000 == 0:
+            print (i)
+            print(seq)
+            print(output)
+            
     infile.close()
     outfile.close()
 
