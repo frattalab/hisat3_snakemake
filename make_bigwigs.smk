@@ -43,24 +43,52 @@ rule split_conversion:
         source splitAwk.sh {input} {params.outputPrefix}
         """
 
-
-rule split_toBedGraph:
+rule split_toBedGraphRatePlus:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
         plus = hisat_outdir + "{name}.+.txt",
-        minus = hisat_outdir + "{name}.-.txt"
     output:
-        plusC = temp(hisat_outdir + "{name}.plus.count.bedgraph"),
-        minusC = temp(hisat_outdir + "{name}.minus.count.bedgraph"),
-        plusR = temp(hisat_outdir + "{name}.plus.rate.bedgraph"),
+        plusR = temp(hisat_outdir + "{name}.plus.rate.bedgraph")
+    shell:
+        """
+        source rateAwk.sh {input.plus} {output.plusR}
+        """
+
+rule split_toBedGraphRateMinus:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        minus = hisat_outdir + "{name}.-.txt",
+    output:
         minusR = temp(hisat_outdir + "{name}.minus.rate.bedgraph")
     shell:
         """
-        source countAwk.sh {input.plus} {output.plusC}
-        source countAwk.sh {input.minus} {output.minusC}
-        source rateAwk.sh {input.plus} {output.plusR}
         source rateAwk.sh {input.minus} {output.minusR}
+        """
+
+rule split_toBedGraphCountPlus:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        plus = hisat_outdir + "{name}.+.txt"
+    output:
+        plusC = temp(hisat_outdir + "{name}.plus.count.bedgraph")
+    shell:
+        """
+        source countAwk.sh {input.plus} {output.plusC}
+        """
+
+rule split_toBedGraphCountMinus:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        minus = hisat_outdir + "{name}.-.txt"
+    output:
+        minusC = temp(hisat_outdir + "{name}.plus.count.bedgraph")
+    shell:
+        """
+        source countAwk.sh {input.minus} {output.minusC}
         """
 
 rule sortBedGraph:
@@ -84,27 +112,89 @@ rule sortBedGraph:
         LC_COLLATE=C sort -k1,1 -k2,2n {input.minusR} > {output.minusR}
         """
 
-rule bedGraphtoBW:
+rule sortBedGraphPlusCount:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        plusC = hisat_outdir + "{name}.plus.count.sorted.bedgraph",
-        minusC = hisat_outdir + "{name}.minus.count.sorted.bedgraph",
-        plusR = hisat_outdir + "{name}.plus.rate.sorted.bedgraph",
-        minusR = hisat_outdir + "{name}.minus.rate.sorted.bedgraph"
+        plusC = hisat_outdir + "{name}.plus.count.bedgraph"
     output:
-        plusC = hisat_outdir + "{name}.count.plus.bw",
-        minusC = hisat_outdir + "{name}.count.minus.bw",
-        plusR = hisat_outdir + "{name}.rate.plus.bw",
-        minusR = hisat_outdir + "{name}.rate.minus.bw"
+        plusC = temp(hisat_outdir + "{name}.plus.count.sorted.bedgraph")
+    shell:
+        """
+        LC_COLLATE=C sort -k1,1 -k2,2n {input.plusC} > {output.plusC}
+        """
+
+rule sortBedGraphMinusCount:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        minusC = hisat_outdir + "{name}.minus.count.bedgraph"
+    output:
+        minusC = temp(hisat_outdir + "{name}.minus.count.sorted.bedgraph")
+    shell:
+        """
+        LC_COLLATE=C sort -k1,1 -k2,2n {input.minusC} > {output.minusC}
+        """
+
+rule sortBedGraphPlusRate:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        plusR = hisat_outdir + "{name}.plus.rate.bedgraph"
+    output:
+        plusR = temp(hisat_outdir + "{name}.plus.rate.sorted.bedgraph")
+    shell:
+        """
+        LC_COLLATE=C sort -k1,1 -k2,2n {input.plusR} > {output.plusR}
+        """
+
+rule bedGraphtoBWPlusCount:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        plusC = hisat_outdir + "{name}.plus.count.sorted.bedgraph"
+    output:
+        plusC = hisat_outdir + "{name}.count.plus.bw"
     shell:
         """
         /SAN/vyplab/alb_projects/tools/bedGraphToBigWig {input.plusC} \
         {CHRMSIZES} {output.plusC}
+        """
+
+rule bedGraphtoBWMinusCount:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        minusC = hisat_outdir + "{name}.minus.count.sorted.bedgraph"
+    output:
+        minusC = hisat_outdir + "{name}.count.minus.bw"
+    shell:
+        """
         /SAN/vyplab/alb_projects/tools/bedGraphToBigWig {input.minusC} \
         {CHRMSIZES} {output.minusC}
+        """
+rule bedGraphtoBWPlusRate:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        plusR = hisat_outdir + "{name}.plus.rate.sorted.bedgraph"
+    output:
+        plusR = hisat_outdir + "{name}.rate.plus.bw"
+    shell:
+        """
         /SAN/vyplab/alb_projects/tools/bedGraphToBigWig {input.plusR} \
         {CHRMSIZES} {output.plusR}
+        """
+        
+rule bedGraphtoBWMinusRate:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        minusR = hisat_outdir + "{name}.minus.rate.sorted.bedgraph"
+    output:
+        minusR = hisat_outdir + "{name}.rate.minus.bw"
+    shell:
+        """
         /SAN/vyplab/alb_projects/tools/bedGraphToBigWig {input.minusR} \
         {CHRMSIZES} {output.minusR}
-        """
+        """"
