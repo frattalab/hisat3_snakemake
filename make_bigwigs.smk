@@ -91,26 +91,6 @@ rule split_toBedGraphCountMinus:
         source countAwk.sh {input.minus} {output.minusC}
         """
 
-rule sortBedGraph:
-    wildcard_constraints:
-        sample="|".join(SAMPLE_NAMES)
-    input:
-        plusC = hisat_outdir + "{name}.plus.count.bedgraph",
-        minusC = hisat_outdir + "{name}.minus.count.bedgraph",
-        plusR = hisat_outdir + "{name}.plus.rate.bedgraph",
-        minusR = hisat_outdir + "{name}.minus.rate.bedgraph"
-    output:
-        plusC = temp(hisat_outdir + "{name}.plus.count.sorted.bedgraph"),
-        minusC = temp(hisat_outdir + "{name}.minus.count.sorted.bedgraph"),
-        plusR = temp(hisat_outdir + "{name}.plus.rate.sorted.bedgraph"),
-        minusR = temp(hisat_outdir + "{name}.minus.rate.sorted.bedgraph")
-    shell:
-        """
-        LC_COLLATE=C sort -k1,1 -k2,2n {input.plusC} > {output.plusC}
-        LC_COLLATE=C sort -k1,1 -k2,2n {input.minusC} > {output.minusC}
-        LC_COLLATE=C sort -k1,1 -k2,2n {input.plusR} > {output.plusR}
-        LC_COLLATE=C sort -k1,1 -k2,2n {input.minusR} > {output.minusR}
-        """
 
 rule sortBedGraphPlusCount:
     wildcard_constraints:
