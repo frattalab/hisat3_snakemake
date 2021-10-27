@@ -49,8 +49,9 @@ rule run_histat3n_pe:
         -2 {input.two} \
         -q \
         -S {params.outputPrefix} \
-        --base-change {params.baseChange}\
-        --threads {threads}
+        --base-change {params.baseChange} \
+        --threads {threads} \
+        --rna-strandness 
         """
 rule sort_histat:
     wildcard_constraints:
@@ -93,7 +94,7 @@ rule sort_bams:
     input:
         hisat_outdir + "{name}.sorted.sam"
     output:
-        hisat_outdir + "{name}.sorted.bam
+        hisat_outdir + "{name}.sorted.bam"
     shell:
         """
         samtools view -S --threads 4 -b {input} > {output} 
