@@ -85,7 +85,7 @@ rule split_toBedGraphCountMinus:
     input:
         minus = hisat_outdir + "{name}.-.txt"
     output:
-        minusC = temp(hisat_outdir + "{name}.plus.count.bedgraph")
+        minusC = temp(hisat_outdir + "{name}.minus.count.bedgraph")
     shell:
         """
         source countAwk.sh {input.minus} {output.minusC}
