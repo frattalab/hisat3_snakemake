@@ -23,7 +23,6 @@ bedGraph = '/SAN/vyplab/alb_projects/tools/bedGraphToBigWig'
 
 rule all_makeBW:
     input:
-        expand(hisat_outdir + "{name}.conversion.tsv", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.count.plus.bw", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.count.minus.bw", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.rate.plus.bw", name = SAMPLE_NAMES),
