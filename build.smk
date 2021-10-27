@@ -38,7 +38,7 @@ rule run_histat3n_pe:
     params:
         genomeDir = GENOME_DIR,
         outputPrefix = os.path.join(hisat_outdir + "{name}.sam"),
-        strandness = config['strandedness']
+        strandness = config['strandedness'],
         baseChange = "T,C"
     threads:
         4
