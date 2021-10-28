@@ -112,7 +112,6 @@ def main():
                         print(seq)
                         no_problem = False
                         break
-                    
 
             output = ','.join([str(a) for a in matrix])
             record.tags = record.tags + [('RA', output)]
