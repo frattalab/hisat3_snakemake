@@ -93,11 +93,14 @@ def main():
 
         matrix = [0]*25
 
-        positions = record.positions
+        positions = record.get_reference_positions(full_length=True)   # fix 1
         seq = record.query_alignment_sequence
 
         for j, p in enumerate(positions):
-            matrix[matrix_dict[fasta[rname][p]+seq[j]]] += 1
+            if p is None:   # fix 2
+                continue
+            if seq[j] != fasta[rname][p]:
+                matrix[matrix_dict[fasta[rname][p]+seq[j]]] += 1
 
         output = ','.join([str(a) for a in matrix])
         record.tags = record.tags + [('RA', output)]
