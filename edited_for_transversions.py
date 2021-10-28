@@ -117,8 +117,8 @@ def main():
             # record.tags = record.tags + [('RA', output)]
             # outfile.write(record)
 
-            if i % 1_000_000 == 0:
-                print (i)
+            # if i % 1_000_000 == 0:
+            #     print (i)
 
             
     infile.close()
