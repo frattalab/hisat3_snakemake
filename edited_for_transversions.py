@@ -106,6 +106,7 @@ def main():
                 print(f'failure: {rname}')
                 print(record)
                 print(seq)
+                break
 
         output = ','.join([str(a) for a in matrix])
         record.tags = record.tags + [('RA', output)]
