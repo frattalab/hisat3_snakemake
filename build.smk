@@ -29,9 +29,9 @@ bedGraph = '/SAN/vyplab/alb_projects/tools/bedGraphToBigWig'
 rule all_hisat3n:
     input:
         expand(hisat_outdir + "{name}.conversion.tsv", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.sorted.bam", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.sorted.bam.bai", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.sorted.tagged.bam", name = SAMPLE_NAMES)
+        expand(hisat_outdir + "{name}.sorted.tagged.bam", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "{name}.sorted.tagged.bam.bai", name = SAMPLE_NAMES)
+
 
 
 
@@ -136,7 +136,7 @@ rule sort_bams:
     input:
         hisat_outdir + "{name}.sorted.sam"
     output:
-        hisat_outdir + "{name}.sorted.bam"
+        temp(hisat_outdir + "{name}.sorted.bam")
     shell:
         """
         samtools view -S --threads 4 -b {input} > {output} 
@@ -165,4 +165,15 @@ rule tag_bams:
     shell:
         """
         python3 edited_for_transversions.py -b {input.bam} -p {params.pickled}
+        """
+rule index_tagged_bams:
+    input:
+        hisat_outdir + "{name}.sorted.tagged.bam"
+    output:
+        hisat_outdir + "{name}.sorted.tagged.bam.bai"
+    threads:
+        4
+    shell:
+        """
+        samtools index {input} 
         """
