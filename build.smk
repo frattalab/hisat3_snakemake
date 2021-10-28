@@ -29,9 +29,10 @@ bedGraph = '/SAN/vyplab/alb_projects/tools/bedGraphToBigWig'
 rule all_hisat3n:
     input:
         expand(hisat_outdir + "{name}.conversion.tsv", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.sorted.bam", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.sorted.bam.bai", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.sorted.tagged.bam", name = SAMPLE_NAMES)
+        expand(hisat_outdir + "{name}.sorted.tagged.bam", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "{name}.sorted.tagged.bam.bai", name = SAMPLE_NAMES)
+
+
 
 
 rule run_hisat3_pe:
@@ -80,6 +81,10 @@ rule run_hisat3_se:
         4
     shell:
         """
+        echo "This is our memory amount"
+        free -mh
+        echo "And the nproc"
+        nproc
         /SAN/vyplab/alb_projects/tools/hisat-3n/hisat-3n \
         -x {params.genomeDir} \
         -U {input.one} \
@@ -160,4 +165,15 @@ rule tag_bams:
     shell:
         """
         python3 edited_for_transversions.py -b {input.bam} -p {params.pickled}
+        """
+rule index_tagged_bams:
+    input:
+        hisat_outdir + "{name}.sorted.tagged.bam"
+    output:
+        hisat_outdir + "{name}.sorted.tagged.bam.bai"
+    threads:
+        4
+    shell:
+        """
+        samtools index {input} 
         """
