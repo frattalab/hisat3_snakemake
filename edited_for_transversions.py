@@ -107,7 +107,7 @@ def main():
                     except:
                         print(f'failure: {rname}')
                         print(positions)
-                        pritn(f'p is: {p}')
+                        print(f'p is: {p}')
                         print(record)
                         print(seq)
                         no_problem = False
