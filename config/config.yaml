@@ -1,5 +1,5 @@
 sampleCSVpath: /SAN/vyplab/alb_projects/data/bdnf_4su_i3lmn/trial_run/bdnf_trialrun.csv
-project_top_level:  /SAN/vyplab/alb_projects/data/bdnf_4su_i3lmn/trial_run/
+project_top_level:   /SAN/vyplab/NYGC_ALSFTD/temporary_bdnf/
 
 end_type: "se"
 strandedness: "F"
