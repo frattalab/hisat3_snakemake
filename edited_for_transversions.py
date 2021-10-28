@@ -113,12 +113,12 @@ def main():
                         no_problem = False
                         break
 
-            output = ','.join([str(a) for a in matrix])
-            record.tags = record.tags + [('RA', output)]
-            outfile.write(record)
+            # output = ','.join([str(a) for a in matrix])
+            # record.tags = record.tags + [('RA', output)]
+            # outfile.write(record)
 
             if i % 1_000_000 == 0:
-            print (i)
+                print (i)
 
             
     infile.close()
