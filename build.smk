@@ -31,6 +31,7 @@ rule all_hisat3n:
         expand(hisat_outdir + "{name}.conversion.tsv", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.sorted.bam", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.sorted.bam.bai", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "{name}.sorted.tagged.bam", name = SAMPLE_NAMES)
 
 
 rule run_hisat3_pe:
