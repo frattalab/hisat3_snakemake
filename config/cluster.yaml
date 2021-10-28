@@ -10,8 +10,8 @@ run_histat3n_pe:
     h_rt: 72:00:00
 run_histat3n_se:
     submission_string: " "
-    h_vmem:    26G
-    tmem:   26G
+    h_vmem:    32G
+    tmem:   32G
     h_rt: 72:00:00
 conversion_table:
     submission_string: "-pe smp 4 -R y"
