@@ -28,11 +28,25 @@ rule all_makeBW:
         expand(hisat_outdir + "{name}.rate.plus.bw", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.rate.minus.bw",name = SAMPLE_NAMES)
 
-rule split_conversion:
+rule filter_conversion:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
         hisat_outdir + "{name}.conversion.tsv"
+    output:
+        temp(hisat_outdir + "{name}.filtered.conversion.tsv")
+    params:
+        outputPrefix = os.path.join(hisat_outdir + "{name}."),
+    shell:
+        """
+        source splitAwk.sh {input} {params.outputPrefix}
+        """
+
+rule split_conversion:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        hisat_outdir + "{name}.filtered.conversion.tsv"
     output:
         temp(hisat_outdir + "{name}.+.txt"),
         temp(hisat_outdir + "{name}.-.txt")

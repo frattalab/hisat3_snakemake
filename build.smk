@@ -146,7 +146,7 @@ rule index_bams:
         4
     shell:
         """
-        samtools index {input} -o {output} 
+        samtools index {input} 
         """
 
 rule tag_bams:
