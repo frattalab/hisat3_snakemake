@@ -18,3 +18,8 @@ conversion_table:
     h_vmem:    6G
     tmem:   6G
     h_rt: 72:00:00
+tag_bams:
+    submission_string: " "
+    h_vmem:    24G
+    tmem:   24G
+    h_rt: 72:00:00
