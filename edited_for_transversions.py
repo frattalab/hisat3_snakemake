@@ -99,8 +99,13 @@ def main():
         for j, p in enumerate(positions):
             if p is None:   # fix 2
                 continue
-            if seq[j] != fasta[rname][p]:
-                matrix[matrix_dict[fasta[rname][p]+seq[j]]] += 1
+            try:
+                if seq[j] != fasta[rname][p]:
+                    matrix[matrix_dict[fasta[rname][p]+seq[j]]] += 1
+            except:
+                print(f'failure: {rname}')
+                print(record)
+                print(seq)
 
         output = ','.join([str(a) for a in matrix])
         record.tags = record.tags + [('RA', output)]
@@ -108,8 +113,7 @@ def main():
 
         if i % 1_000_000 == 0:
             print (i)
-            print(seq)
-            print(output)
+
             
     infile.close()
     outfile.close()
