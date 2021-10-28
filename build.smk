@@ -151,6 +151,8 @@ rule index_bams:
         4
     shell:
         """
+        t=/scratch0/$USER/$RANDOM
+        mkdir -p $t
         samtools index {input} -o {output} -T $t
         """
 
