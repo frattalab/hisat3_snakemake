@@ -3,18 +3,28 @@ __default__:
     h_rt:   24:00:00
     submission_string: " "
     tmem: 1.9G
-run_histat3n_pe:
+run_hisat3_pe:
     submission_string: "-pe smp 4 -R y"
     h_vmem:    6G
     tmem:   6G
     h_rt: 90:00:00
-run_histat3n_se:
+run_hisat3_se:
     submission_string: " "
-    h_vmem:    32G
-    tmem:   32G
-    h_rt: 72:00:00
+    h_vmem:    24G
+    tmem:   24G
+    h_rt: 90:00:00
 conversion_table:
     submission_string: "-pe smp 4 -R y"
     h_vmem:    6G
     tmem:   6G
+    h_rt: 72:00:00
+tag_bams:
+    submission_string: " "
+    h_vmem:    24G
+    tmem:   24G
+    h_rt: 72:00:00
+sort_histat:
+    submission_string: " "
+    h_vmem:    8G
+    tmem:   8G
     h_rt: 72:00:00
