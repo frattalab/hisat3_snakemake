@@ -80,37 +80,36 @@ def main():
 
     for i, record in enumerate(infile):
 
-            rname = record.reference_name
+        rname = record.reference_name
 
-            if rname is None:
+        if rname is None:
+            continue
+
+        if rname not in fasta.keys():
+            if rname not in skipped:
+                skipped.append(rname)
+                print("Skipping read aligned to unknown sequence " + rname)
+            continue
+
+        matrix = [0]*25
+
+        positions = record.get_reference_positions(full_length=True)   # fix 1
+        seq = record.query_sequence # fix 3
+
+        for j, p in enumerate(positions):
+            if p is None:   # fix 2
                 continue
-
-            if rname not in fasta.keys():
-                if rname not in skipped:
-                    skipped.append(rname)
-                    print("Skipping read aligned to unknown sequence " + rname)
-                continue
-
-            matrix = [0]*25
-
-            positions = record.get_reference_positions(full_length=True)   # fix 1
-            seq = record.query_sequence
-
-            for j, p in enumerate(positions):
-                if p is None:   # fix 2
-                    continue
-                try:
-                    if seq[j] != fasta[rname][p]:
-                        matrix[matrix_dict[fasta[rname][p]+seq[j]]] += 1
-                except:
-                    print(f'failure: {rname}')
-                    print(positions)
-                    print(f'p is: {p}')
-                    print(record)
-                    print(seq)
-                    no_problem = False
-                    break
-
+            try:
+                if seq[j] != fasta[rname][p]:
+                    matrix[matrix_dict[fasta[rname][p]+seq[j]]] += 1
+            except:
+                print(f'failure: {rname}')
+                print(positions)
+                print(f'p is: {p}')
+                print(record)
+                print(seq)
+                break
+        
         output = ','.join([str(a) for a in matrix])
         record.tags = record.tags + [('RA', output)]
         
