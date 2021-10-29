@@ -116,7 +116,7 @@ def main():
         outfile.write(record)
 
         if i % 1_000_000 == 0:
-            print (i)
+            print (f'{i} reads read')
 
             
     infile.close()
