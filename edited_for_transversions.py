@@ -77,48 +77,47 @@ def main():
     outfile_path = os.path.splitext(args.bam)[0] + ".tagged.bam"
     outfile = pysam.AlignmentFile(outfile_path, "wb", template=infile)
 
-    print("fasta read looking through reads")
-    no_problem = True
-    while no_problem:
-        for i, record in enumerate(infile):
 
-                rname = record.reference_name
+    for i, record in enumerate(infile):
 
-                if rname is None:
+            rname = record.reference_name
+
+            if rname is None:
+                continue
+
+            if rname not in fasta.keys():
+                if rname not in skipped:
+                    skipped.append(rname)
+                    print("Skipping read aligned to unknown sequence " + rname)
+                continue
+
+            matrix = [0]*25
+
+            positions = record.get_reference_positions(full_length=True)   # fix 1
+            seq = record.query_sequence
+
+            for j, p in enumerate(positions):
+                if p is None:   # fix 2
                     continue
+                try:
+                    if seq[j] != fasta[rname][p]:
+                        matrix[matrix_dict[fasta[rname][p]+seq[j]]] += 1
+                except:
+                    print(f'failure: {rname}')
+                    print(positions)
+                    print(f'p is: {p}')
+                    print(record)
+                    print(seq)
+                    no_problem = False
+                    break
 
-                if rname not in fasta.keys():
-                    if rname not in skipped:
-                        skipped.append(rname)
-                        print("Skipping read aligned to unknown sequence " + rname)
-                    continue
+        output = ','.join([str(a) for a in matrix])
+        record.tags = record.tags + [('RA', output)]
+        
+        outfile.write(record)
 
-                matrix = [0]*25
-
-                positions = record.get_reference_positions(full_length=True)   # fix 1
-                seq = record.query_alignment_sequence
-
-                for j, p in enumerate(positions):
-                    if p is None:   # fix 2
-                        continue
-                    try:
-                        if seq[j] != fasta[rname][p]:
-                            matrix[matrix_dict[fasta[rname][p]+seq[j]]] += 1
-                    except:
-                        print(f'failure: {rname}')
-                        print(positions)
-                        print(f'p is: {p}')
-                        print(record)
-                        print(seq)
-                        no_problem = False
-                        break
-
-            # output = ','.join([str(a) for a in matrix])
-            # record.tags = record.tags + [('RA', output)]
-            # outfile.write(record)
-
-            # if i % 1_000_000 == 0:
-            #     print (i)
+        if i % 1_000_000 == 0:
+            print (i)
 
             
     infile.close()
