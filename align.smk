@@ -164,7 +164,7 @@ rule tag_bams:
         pickled = GENOME_FA + '.pickle'
     shell:
         """
-        python3 edited_for_transversions.py -b {input.bam} -p {params.pickled}
+        python3 scripts/slamdunk_taggers.py -b {input.bam} -p {params.pickled}
         """
 rule index_tagged_bams:
     input:
