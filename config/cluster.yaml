@@ -23,7 +23,7 @@ tag_bams:
     h_vmem:    24G
     tmem:   24G
     h_rt: 72:00:00
-sort_histat:
+sort_bams:
     submission_string: " "
     h_vmem:    8G
     tmem:   8G

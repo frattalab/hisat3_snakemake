@@ -92,24 +92,41 @@ def main():
             continue
 
         matrix = [0]*25
+        mismatch_pos = []
 
         positions = record.get_reference_positions(full_length=True)   # fix 1
-        seq = record.query_alignment_sequence
+        seq = record.query_sequence # fix 3
 
         for j, p in enumerate(positions):
             if p is None:   # fix 2
                 continue
-            if seq[j] != fasta[rname][p]:
+            try:
                 matrix[matrix_dict[fasta[rname][p]+seq[j]]] += 1
+                if seq[j] != fasta[rname][p]:
+                    mmtype = matrix_dict[fasta[rname][p]+seq[j]]
+                    #MP:Z:2:38:38,16:70:70,10:80:80,7:110:110,10:189:189,16:202:202
+                    mismatch_pos.append(f'{mmtype}:{p}:{p}')
+            except:
+                print(f'failure: {rname}')
+                print(positions)
+                print(f'p is: {p}')
+                print(record)
+                print(seq)
+                break
+        
+        ra_tag = ','.join([str(a) for a in matrix])
+        record.tags = record.tags + [('RA', ra_tag)]
+        
+        if len(mismatch_pos) > 0:
+            ma_tag = ','.join([str(a) for a in mismatch_pos])
+            record.tags = record.tags + [('MP', ra_tag)]
 
-        output = ','.join([str(a) for a in matrix])
-        record.tags = record.tags + [('RA', output)]
+
         outfile.write(record)
 
         if i % 1_000_000 == 0:
-            print (i)
-            print(seq)
-            print(output)
+            print (f'{i} reads read')
+
             
     infile.close()
     outfile.close()
