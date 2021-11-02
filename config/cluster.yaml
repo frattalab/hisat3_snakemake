@@ -33,3 +33,8 @@ sort_histat:
     h_vmem:    16G
     tmem:   16G
     h_rt: 72:00:00
+filter_conversion:
+    submission_string: " "
+    h_vmem:    8G
+    tmem:   8G
+    h_rt: 12:00:00
