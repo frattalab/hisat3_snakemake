@@ -4,7 +4,7 @@
 # end_type: "se"
 # strandedness: "F"
 
-sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/foursu_full_experiment_kd.csv
+sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/foursu_full_experiment_eight_four.csv
 #master directory in which output from individual rules is stored (within individual subdirectories, unless overriden below)
 project_top_level:  /SAN/vyplab/NYGC_ALSFTD/temporary_4su/
 end_type: "pe"
