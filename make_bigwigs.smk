@@ -23,10 +23,8 @@ bedGraph = '/SAN/vyplab/alb_projects/tools/bedGraphToBigWig'
 
 rule all_makeBW:
     input:
-        expand(hisat_outdir + "{name}.count.plus.bw", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.count.minus.bw", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.rate.plus.bw", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.rate.minus.bw",name = SAMPLE_NAMES)
+        expand(hisat_outdir + "{name}.count.bw", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "{name}.rate.bw", name = SAMPLE_NAMES)
 
 rule filter_conversion:
     wildcard_constraints:
@@ -42,67 +40,29 @@ rule filter_conversion:
         """
         grep -E '{params.grep_pattern}' {input} > {output}
         """
-rule split_conversion:
-    wildcard_constraints:
-        sample="|".join(SAMPLE_NAMES)
-    input:
-        hisat_outdir + "{name}.filtered.conversion.tsv"
-    output:
-        temp(hisat_outdir + "{name}.+.txt"),
-        temp(hisat_outdir + "{name}.-.txt")
-    params:
-        outputPrefix = os.path.join(hisat_outdir + "{name}."),
-    shell:
-        """
-        source scripts/splitAwk.sh {input} {params.outputPrefix}
-        """
 
-rule split_toBedGraphRatePlus:
+rule split_toBedGraphRate:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        plus = hisat_outdir + "{name}.+.txt",
+        plus = hisat_outdir + "{name}.filtered.conversion.tsv",
     output:
-        plusR = temp(hisat_outdir + "{name}.plus.rate.bedgraph")
+        plusR = temp(hisat_outdir + "{name}.rate.bedgraph")
     shell:
         """
         source scripts/rateAwk.sh {input.plus} {output.plusR}
         """
 
-rule split_toBedGraphRateMinus:
+rule split_toBedGraphCount:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        minus = hisat_outdir + "{name}.-.txt",
+        plus = hisat_outdir + "{name}.filtered.conversion.tsv"
     output:
-        minusR = temp(hisat_outdir + "{name}.minus.rate.bedgraph")
-    shell:
-        """
-        source scripts/rateAwk.sh {input.minus} {output.minusR}
-        """
-
-rule split_toBedGraphCountPlus:
-    wildcard_constraints:
-        sample="|".join(SAMPLE_NAMES)
-    input:
-        plus = hisat_outdir + "{name}.+.txt"
-    output:
-        plusC = temp(hisat_outdir + "{name}.plus.count.bedgraph")
+        plusC = temp(hisat_outdir + "{name}.count.bedgraph")
     shell:
         """
         source scripts/countAwk.sh {input.plus} {output.plusC}
-        """
-
-rule split_toBedGraphCountMinus:
-    wildcard_constraints:
-        sample="|".join(SAMPLE_NAMES)
-    input:
-        minus = hisat_outdir + "{name}.-.txt"
-    output:
-        minusC = temp(hisat_outdir + "{name}.minus.count.bedgraph")
-    shell:
-        """
-        source scripts/countAwk.sh {input.minus} {output.minusC}
         """
 
 
@@ -110,9 +70,9 @@ rule sortBedGraphPlusCount:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        plusC = hisat_outdir + "{name}.plus.count.bedgraph"
+        plusC = hisat_outdir + "{name}.count.bedgraph"
     output:
-        plusC = temp(hisat_outdir + "{name}.plus.count.sorted.bedgraph")
+        plusC = temp(hisat_outdir + "{name}.count.sorted.bedgraph")
     threads:
         2
     shell:
@@ -120,27 +80,13 @@ rule sortBedGraphPlusCount:
         LC_COLLATE=C sort -k1,1 -k2,2n {input.plusC} > {output.plusC}
         """
 
-rule sortBedGraphMinusCount:
-    wildcard_constraints:
-        sample="|".join(SAMPLE_NAMES)
-    input:
-        minusC = hisat_outdir + "{name}.minus.count.bedgraph"
-    output:
-        minusC = temp(hisat_outdir + "{name}.minus.count.sorted.bedgraph")
-    threads:
-        2
-    shell:
-        """
-        LC_COLLATE=C sort -k1,1 -k2,2n {input.minusC} > {output.minusC}
-        """
-
 rule sortBedGraphPlusRate:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        plusR = hisat_outdir + "{name}.plus.rate.bedgraph"
+        plusR = hisat_outdir + "{name}.rate.bedgraph"
     output:
-        plusR = temp(hisat_outdir + "{name}.plus.rate.sorted.bedgraph")
+        plusR = temp(hisat_outdir + "{name}.rate.sorted.bedgraph")
     threads:
         2
     shell:
@@ -148,27 +94,13 @@ rule sortBedGraphPlusRate:
         LC_COLLATE=C sort --parallel 2 -k1,1 -k2,2n {input.plusR} > {output.plusR}
         """
 
-rule sortBedGraphMinusRate:
-    wildcard_constraints:
-        sample="|".join(SAMPLE_NAMES)
-    input:
-        plusR = hisat_outdir + "{name}.minus.rate.bedgraph"
-    output:
-        plusR = temp(hisat_outdir + "{name}.minus.rate.sorted.bedgraph")
-    threads:
-        2
-    shell:
-        """
-        LC_COLLATE=C sort -k1,1 -k2,2n {input.plusR} > {output.plusR}
-        """
-
 rule bedGraphtoBWPlusCount:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        plusC = hisat_outdir + "{name}.plus.count.sorted.bedgraph"
+        plusC = hisat_outdir + "{name}.count.sorted.bedgraph"
     output:
-        plusC = hisat_outdir + "{name}.count.plus.bw"
+        plusC = hisat_outdir + "{name}.count.bw"
     params:
         bedGraphToolPath = config['bedGraphToolPath']
     shell:
@@ -177,40 +109,16 @@ rule bedGraphtoBWPlusCount:
         {CHRMSIZES} {output.plusC}
         """
 
-rule bedGraphtoBWMinusCount:
-    wildcard_constraints:
-        sample="|".join(SAMPLE_NAMES)
-    input:
-        minusC = hisat_outdir + "{name}.minus.count.sorted.bedgraph"
-    output:
-        minusC = hisat_outdir + "{name}.count.minus.bw"
-    shell:
-        """
-        /SAN/vyplab/alb_projects/tools/bedGraphToBigWig {input.minusC} \
-        {CHRMSIZES} {output.minusC}
-        """
 rule bedGraphtoBWPlusRate:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        plusR = hisat_outdir + "{name}.plus.rate.sorted.bedgraph"
+        plusR = hisat_outdir + "{name}.rate.sorted.bedgraph"
     output:
-        plusR = hisat_outdir + "{name}.rate.plus.bw"
+        plusR = hisat_outdir + "{name}.rate.bw"
     shell:
         """
         /SAN/vyplab/alb_projects/tools/bedGraphToBigWig {input.plusR} \
         {CHRMSIZES} {output.plusR}
         """
 
-rule bedGraphtoBWMinusRate:
-    wildcard_constraints:
-        sample="|".join(SAMPLE_NAMES)
-    input:
-        minusR = hisat_outdir + "{name}.minus.rate.sorted.bedgraph"
-    output:
-        minusR = hisat_outdir + "{name}.rate.minus.bw"
-    shell:
-        """
-        /SAN/vyplab/alb_projects/tools/bedGraphToBigWig {input.minusR} \
-        {CHRMSIZES} {output.minusR}
-        """
