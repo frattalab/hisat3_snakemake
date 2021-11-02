@@ -45,7 +45,7 @@ rule split_toBedGraphRate:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        plus = hisat_outdir + "{name}.txt",
+        plus = hisat_outdir + "{name}.filtered.conversion.tsv",
     output:
         plusR = temp(hisat_outdir + "{name}.rate.bedgraph")
     shell:
@@ -57,7 +57,7 @@ rule split_toBedGraphCount:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        plus = hisat_outdir + "{name}.txt"
+        plus = hisat_outdir + "{name}.filtered.conversion.tsv"
     output:
         plusC = temp(hisat_outdir + "{name}.count.bedgraph")
     shell:
