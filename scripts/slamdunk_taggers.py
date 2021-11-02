@@ -130,6 +130,7 @@ def main():
             
     infile.close()
     outfile.close()
+    print("I finished tagging without any problems")
 
 
 
