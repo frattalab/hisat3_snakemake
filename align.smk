@@ -136,7 +136,7 @@ rule sort_bams:
     input:
         hisat_outdir + "{name}.sorted.sam"
     output:
-        temp(hisat_outdir + "{name}.sorted.bam")
+        hisat_outdir + "{name}.sorted.bam"
     shell:
         """
         samtools view -S --threads 4 -b {input} > {output} 

@@ -1,7 +1,9 @@
+__author__ = '{author}'
 import os
 import pysam
 import argparse
 import pickle
+
 
 
 
@@ -119,7 +121,7 @@ def main():
         
         if len(mismatch_pos) > 0:
             ma_tag = ','.join([str(a) for a in mismatch_pos])
-            record.tags = record.tags + [('MP', ra_tag)]
+            record.tags = record.tags + [('MP', ma_tag)]
 
 
         outfile.write(record)
@@ -136,4 +138,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
