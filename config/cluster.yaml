@@ -1,8 +1,8 @@
 __default__:
-    h_vmem: 1.9G
-    h_rt:   24:00:00
     submission_string: " "
-    tmem: 1.9G
+    h_vmem:    8G
+    tmem:   8G
+    h_rt: 12:00:00
 run_hisat3_pe:
     submission_string: "-pe smp 4 -R y"
     h_vmem:    6G
