@@ -28,7 +28,7 @@ def main():
         if read.has_tag('Yf'):
             conversion_tag = read.get_tag("Yf")
             
-            if conversion_tag >= args.mimimum:
+            if conversion_tag >= int(args.mimimum):
                 outfileConverted.write(record)
             else:
                 outfileUnConverted.write(record)
