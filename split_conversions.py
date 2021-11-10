@@ -10,7 +10,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-b", "--bam")
     parser.add_argument("-m", "--mimimum",  default=2)
-    skipped = []
+    
+    args = parser.parse_args()
+
 
     infile = pysam.AlignmentFile(args.bam, "rb")
 
