@@ -20,7 +20,7 @@ def main():
     outfileConverted = pysam.AlignmentFile(outfileConverted_path, "wb", template=infile)
 
     outfileUnConverted_path = os.path.splitext(args.bam)[0] + ".UNconvertedreads.bam"
-    outfileUnConverted = pysam.AlignmentFile(outfileConverted_path, "wb", template=infile)
+    outfileUnConverted = pysam.AlignmentFile(outfileUnConverted_path, "wb", template=infile)
 
 
     for i, read in enumerate(infile):
