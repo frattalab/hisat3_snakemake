@@ -29,15 +29,14 @@ def main():
             conversion_tag = read.get_tag("Yf")
             
             if conversion_tag >= int(args.mimimum):
-                outfileConverted.write(record)
+                outfileConverted.write(read)
             else:
-                outfileUnConverted.write(record)
+                outfileUnConverted.write(read)
 
 
             if i % 1_000_000 == 0:
                 print (i)
-                print(seq)
-                print(output)
+
                 
     infile.close()
     outfileConverted.close()
