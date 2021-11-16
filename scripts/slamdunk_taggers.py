@@ -107,7 +107,9 @@ def main():
                 if seq[j] != fasta[rname][p]:
                     mmtype = matrix_dict[fasta[rname][p]+seq[j]]
                     #MP:Z:2:38:38,16:70:70,10:80:80,7:110:110,10:189:189,16:202:202
-                    mismatch_pos.append(f'{mmtype}:{p}:{p}')
+                    ###TODO calculate the relative position from left most on the read
+                    relative_position = p - record.query_alignment_start
+                    mismatch_pos.append(f'{mmtype}:{j}:{relative_position}')
             except:
                 print(f'failure: {rname}')
                 print(positions)
