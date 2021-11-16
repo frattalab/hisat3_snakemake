@@ -23,7 +23,7 @@ SAMPLE_NAMES = SAMPLES['sample_name'].tolist()
 
 GENOME_DIR = "/SAN/vyplab/vyplab_reference_genomes/hisat-3n/mouse/raw"
 GENOME_FA = config['fasta']
-CHRMSIZES = config['fasta_sizes']
+
 bedGraph = '/SAN/vyplab/alb_projects/tools/bedGraphToBigWig'
 
 rule all_hisat3n:
