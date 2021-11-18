@@ -29,8 +29,9 @@ bedGraph = '/SAN/vyplab/alb_projects/tools/bedGraphToBigWig'
 rule all_hisat3n:
     input:
         expand(hisat_outdir + "{name}.conversion.tsv", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.sorted.tagged.bam", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.sorted.tagged.bam.bai", name = SAMPLE_NAMES)
+        expand(hisat_outdir + "{name}.sorted.bam.bai", name = SAMPLE_NAMES),
+        # expand(hisat_outdir + "{name}.sorted.tagged.bam", name = SAMPLE_NAMES),
+        # expand(hisat_outdir + "{name}.sorted.tagged.bam.bai", name = SAMPLE_NAMES)
 
 
 
@@ -154,26 +155,26 @@ rule index_bams:
         samtools index {input} 
         """
 
-rule tag_bams:
-    input:
-        bam = hisat_outdir + "{name}.sorted.bam",
-        bai = hisat_outdir + "{name}.sorted.bam.bai"
-    output:
-        hisat_outdir + "{name}.sorted.tagged.bam"
-    params:
-        pickled = GENOME_FA + '.pickle'
-    shell:
-        """
-        python3 scripts/slamdunk_taggers.py -b {input.bam} -p {params.pickled}
-        """
-rule index_tagged_bams:
-    input:
-        hisat_outdir + "{name}.sorted.tagged.bam"
-    output:
-        hisat_outdir + "{name}.sorted.tagged.bam.bai"
-    threads:
-        4
-    shell:
-        """
-        samtools index {input} 
-        """
+# rule tag_bams:
+#     input:
+#         bam = hisat_outdir + "{name}.sorted.bam",
+#         bai = hisat_outdir + "{name}.sorted.bam.bai"
+#     output:
+#         hisat_outdir + "{name}.sorted.tagged.bam"
+#     params:
+#         pickled = GENOME_FA + '.pickle'
+#     shell:
+#         """
+#         python3 scripts/slamdunk_taggers.py -b {input.bam} -p {params.pickled}
+#         """
+# rule index_tagged_bams:
+#     input:
+#         hisat_outdir + "{name}.sorted.tagged.bam"
+#     output:
+#         hisat_outdir + "{name}.sorted.tagged.bam.bai"
+#     threads:
+#         4
+#     shell:
+#         """
+#         samtools index {input} 
+#         """
