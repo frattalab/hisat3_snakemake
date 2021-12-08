@@ -1,7 +1,6 @@
 import os
 import pysam
 import argparse
-import pickle
 
 
 

@@ -1,4 +1,4 @@
-__author__ = '{author}'
+__author__ = '@oscarwilkins'
 import os
 import pysam
 import argparse

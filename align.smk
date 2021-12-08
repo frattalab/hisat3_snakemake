@@ -9,7 +9,7 @@ if config['end_type'] == "pe":
 else:
 	ruleorder: run_hisat3_se > run_hisat3_pe
     
-#make sure the output folder for STAR exists before running anything
+#make sure the output folder exists before running anything
 hisat_outdir = get_output_dir(config["project_top_level"], config['histat3n_output_folder'])
 os.system("mkdir -p {0}".format(hisat_outdir))
 
@@ -32,8 +32,6 @@ rule all_hisat3n:
         expand(hisat_outdir + "{name}.sorted.bam.bai", name = SAMPLE_NAMES),
         # expand(hisat_outdir + "{name}.sorted.tagged.bam", name = SAMPLE_NAMES),
         # expand(hisat_outdir + "{name}.sorted.tagged.bam.bai", name = SAMPLE_NAMES)
-
-
 
 
 rule run_hisat3_pe:
@@ -144,7 +142,7 @@ rule zip_conversion_table:
         """
         gzip {input}
         """
-        
+
 rule sort_bams:
     input:
         hisat_outdir + "{name}.sorted.sam"
@@ -167,6 +165,50 @@ rule index_bams:
         samtools index {input} 
         """
 
+rule call_samtools_mpileup:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        hisat_outdir + "{name}.sorted.bam"
+    output:
+        hisat_outdir + "{name}.pileup"
+    params:
+        referenceFile = GENOME_FA
+    shell:
+    """
+    samtools mpileup -B -A -f {params.referenceFile} {input} > {output}
+    """
+
+rule call_varscan:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        hisat_outdir + "{name}.pileup"
+    output:
+        hisat_outdir + "{name}.vcf"
+    params:
+        referenceFile = GENOME_FA
+    shell:
+    """
+    varscan pileup2snp  --strand-which filter 0 \
+    --output-vcf \
+    --min-var-freq {params.minVarFreq} \
+    --min-coverage {params.minCov} \
+    --variants 1
+    """
+
+# rule snp_mask_bams:
+#     input:
+#         bam = hisat_outdir + "{name}.sorted.bam",
+#         bai = hisat_outdir + "{name}.sorted.bam.bai"
+#     output:
+#         hisat_outdir + "{name}.sorted.tagged.bam"
+#     params:
+#         pickled = GENOME_FA + '.pickle'
+#     shell:
+#         """
+#         python3 scripts/slamdunk_taggers.py -b {input.bam} -p {params.pickled}
+#         """
 # rule tag_bams:
 #     input:
 #         bam = hisat_outdir + "{name}.sorted.bam",
