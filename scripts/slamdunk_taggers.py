@@ -57,7 +57,13 @@ def main():
     parser.add_argument("-b", "--bam")
     parser.add_argument("-f", "--fasta")
     parser.add_argument("-p", "--picklefasta")
+    parser.add_argument("-r", "--read1", default=1, type=int, help="Which read correponds to the forward strand of the RNA.\
+         Default = 1, alternative = 2 (if read 2 is the RNA sense strand)")
     args = parser.parse_args()
+
+    assert args.read1 in [1, 2], "Must be 1 or 2"
+
+    rev_c_d = {"A": "T", "T": "A", "C": "G", "G": "C", "N": "N"}
 
     matrix_dict = gen_dict_matrix()
 
@@ -99,13 +105,42 @@ def main():
         positions = record.get_reference_positions(full_length=True)   # fix 1
         seq = record.query_sequence # fix 3
 
+        # Check what genomic strand the original RNA is from
+        if record.is_reverse:  #
+            if record.is_read1:
+                strand = "-"
+            else:
+                strand = "+"
+        else:
+            if record.is_read1:
+                strand = "+"
+            else:
+                strand = "-"
+
+        # Flip if read 2 is the sense strand
+        if args.read1 == 2:
+            if strand == "+":
+                strand = "-"
+            else:
+                strand = "+"            
+
+
         for j, p in enumerate(positions):
             if p is None:   # fix 2
                 continue
             try:
-                matrix[matrix_dict[fasta[rname][p]+seq[j]]] += 1
-                if seq[j] != fasta[rname][p]:
-                    mmtype = matrix_dict[fasta[rname][p]+seq[j]]
+
+                if strand == "-":
+                    ref_RNA_base = rev_c_d[fasta[rname][p]]
+                    read_RNA_base = rev_c_d[seq[j]]
+                else:
+                    ref_RNA_base = fasta[rname][p]
+                    read_RNA_base = seq[j]                    
+
+                matrix[matrix_dict[ref_RNA_base + read_RNA_base]] += 1
+
+                if ref_RNA_base != read_RNA_base:
+                    mmtype = matrix_dict[ref_RNA_base+read_RNA_base]
                     #MP:Z:2:38:38,16:70:70,10:80:80,7:110:110,10:189:189,16:202:202
                     ###TODO calculate the relative position from left most on the read
                     relative_position = p - record.query_alignment_start
