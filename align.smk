@@ -164,37 +164,37 @@ rule index_bams:
         samtools index {input} 
         """
 
-rule call_samtools_mpileup:
-    wildcard_constraints:
-        sample="|".join(SAMPLE_NAMES)
-    input:
-        hisat_outdir + "{name}.sorted.bam"
-    output:
-        hisat_outdir + "{name}.pileup"
-    params:
-        referenceFile = GENOME_FA
-    shell:
-    """
-    samtools mpileup -B -A -f {params.referenceFile} {input} > {output}
-    """
+# rule call_samtools_mpileup:
+#     wildcard_constraints:
+#         sample="|".join(SAMPLE_NAMES)
+#     input:
+#         hisat_outdir + "{name}.sorted.bam"
+#     output:
+#         hisat_outdir + "{name}.pileup"
+#     params:
+#         referenceFile = GENOME_FA
+#     shell:
+#     """
+#     samtools mpileup -B -A -f {params.referenceFile} {input} > {output}
+#     """
 
-rule call_varscan:
-    wildcard_constraints:
-        sample="|".join(SAMPLE_NAMES)
-    input:
-        hisat_outdir + "{name}.pileup"
-    output:
-        hisat_outdir + "{name}.vcf"
-    params:
-        referenceFile = GENOME_FA
-    shell:
-    """
-    varscan pileup2snp  --strand-which filter 0 \
-    --output-vcf \
-    --min-var-freq {params.minVarFreq} \
-    --min-coverage {params.minCov} \
-    --variants 1
-    """
+# rule call_varscan:
+#     wildcard_constraints:
+#         sample="|".join(SAMPLE_NAMES)
+#     input:
+#         hisat_outdir + "{name}.pileup"
+#     output:
+#         hisat_outdir + "{name}.vcf"
+#     params:
+#         referenceFile = GENOME_FA
+#     shell:
+#     """
+#     varscan pileup2snp  --strand-which filter 0 \
+#     --output-vcf \
+#     --min-var-freq {params.minVarFreq} \
+#     --min-coverage {params.minCov} \
+#     --variants 1
+#     """
 
 # rule snp_mask_bams:
 #     input:
