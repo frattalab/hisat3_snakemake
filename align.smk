@@ -20,8 +20,7 @@ SAMPLES = SAMPLES.replace(np.nan, '', regex=True)
 
 SAMPLE_NAMES = SAMPLES['sample_name'].tolist()
 
-
-GENOME_DIR = "/SAN/vyplab/vyplab_reference_genomes/hisat-3n/mouse/raw"
+GENOME_DIR = config['GENOME_DIR']
 GENOME_FA = config['fasta']
 
 bedGraph = '/SAN/vyplab/alb_projects/tools/bedGraphToBigWig'
