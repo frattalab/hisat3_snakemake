@@ -2,61 +2,61 @@ import os
 import pysam
 import pickle
 
-bampath = "testing.bam"
-vcfpath = "/SAN/vyplab/vyplab_reference_genomes/wtc11_vcf/wtc11.vcf.gz"
+# bampath = "testing.bam"
+# vcfpath = "/SAN/vyplab/vyplab_reference_genomes/wtc11_vcf/wtc11.vcf.gz"
 
 
-vcf = pysam.VariantFile(vcfpath,"r")
-records = vcf.fetch()
+# vcf = pysam.VariantFile(vcfpath,"r")
+# records = vcf.fetch()
 
-infile = pysam.AlignmentFile(bampath, "rb")
+# infile = pysam.AlignmentFile(bampath, "rb")
 
-outfile_path = os.path.splitext(bampath)[0] + ".snpmasked.bam"
-outfile = pysam.AlignmentFile(outfile_path, "wb", template=infile)
-
-
-reads_parsed = []
-#go through all the SNPs in the vcf file
-for r in records:
-    #first check that the SNP is relevant for this - e.g. either a A > G or a T > C
-    if (s.alleles[0] == 'T' and s.alleles[1] == 'C') | (s.alleles[0] == 'A' and s.alleles[1] == 'G') :
-        coverage = infile.count_coverage(contig = r.chrom, start = r.start,stop = r.stop)
-        #now check if there's any coverage at that location
-        if(sum([x[0] for x in coverage]) > 0 ):
-            #if there's coverage - get all the reads that overlap to that location with fetch
-            overlapping_reads = infile.fetch(r.chrom, r.start, r.stop)
-            for o in overlapping_reads:
-                #now for the reads that actually overlap that position (e.g. not just spliced reads)
-                if o.get_overlap(r.start, r.stop) > 0:
-                    #fix the Yf tag - which contains the number of characteristic mismatches
-                    new_yf = o.get_tag('Yf') - 1
-                    outfile.write(o)
-                    reads_parsed.append(o.query_name)
+# outfile_path = os.path.splitext(bampath)[0] + ".snpmasked.bam"
+# outfile = pysam.AlignmentFile(outfile_path, "wb", template=infile)
 
 
-bampath = "testing.bam"
-vcfpath = "/SAN/vyplab/vyplab_reference_genomes/wtc11_vcf/wtc11.vcf.gz"
+# reads_parsed = []
+# #go through all the SNPs in the vcf file
+# for r in records:
+#     #first check that the SNP is relevant for this - e.g. either a A > G or a T > C
+#     if (s.alleles[0] == 'T' and s.alleles[1] == 'C') | (s.alleles[0] == 'A' and s.alleles[1] == 'G') :
+#         coverage = infile.count_coverage(contig = r.chrom, start = r.start,stop = r.stop)
+#         #now check if there's any coverage at that location
+#         if(sum([x[0] for x in coverage]) > 0 ):
+#             #if there's coverage - get all the reads that overlap to that location with fetch
+#             overlapping_reads = infile.fetch(r.chrom, r.start, r.stop)
+#             for o in overlapping_reads:
+#                 #now for the reads that actually overlap that position (e.g. not just spliced reads)
+#                 if o.get_overlap(r.start, r.stop) > 0:
+#                     #fix the Yf tag - which contains the number of characteristic mismatches
+#                     new_yf = o.get_tag('Yf') - 1
+#                     outfile.write(o)
+#                     reads_parsed.append(o.query_name)
 
 
-vcf = pysam.VariantFile(vcfpath,"r")
-records = vcf.fetch()
+# bampath = "testing.bam"
+# vcfpath = "/SAN/vyplab/vyplab_reference_genomes/wtc11_vcf/wtc11.vcf.gz"
 
-infile = pysam.AlignmentFile(bampath, "rb")
-for read in infile:
-    #SOLVE first for the condition that the library is stranded (e.g. read_1 matches the direction of the RNA)
 
-    #if they're aligned to the plus strand we care about T > C mutations
-    if read.get_tag('YZ') == "+":
+# vcf = pysam.VariantFile(vcfpath,"r")
+# records = vcf.fetch()
+
+# infile = pysam.AlignmentFile(bampath, "rb")
+# for read in infile:
+#     #SOLVE first for the condition that the library is stranded (e.g. read_1 matches the direction of the RNA)
+
+#     #if they're aligned to the plus strand we care about T > C mutations
+#     if read.get_tag('YZ') == "+":
         
 
-    elifread.get_tag('YZ') == "-":
+#     elifread.get_tag('YZ') == "-":
 
 
 
     
-    outfile.write(o)
+#     outfile.write(o)
 
-outfile.close()
+# outfile.close()
 
 
 
