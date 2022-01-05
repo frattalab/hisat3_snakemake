@@ -75,7 +75,7 @@ def build_dictionaries(vcfpath):
         pickle.dump(a_g, handle, protocol=pickle.HIGHEST_PROTOCOL)
     with open(t_c_pickle, 'wb') as handle:
         pickle.dump(t_c, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    print("All done!")
+    print("All done writing VCF pickles!!")
     return 0
 
 
@@ -116,7 +116,8 @@ def main():
     return result
 
 
-
+if __name__ == "__main__":
+    main()
 
 # reads_parsed = []
 # #go through all the SNPs in the vcf file
