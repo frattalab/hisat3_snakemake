@@ -9,7 +9,7 @@ def snpmask_bams(bampath, vcfpath, outfile_path):
     print("Getting T>C and A>G SNPs from VCF")
     a_g, t_c = get_snp_dictionaries(vcfpath)
     print("Done getting T>C and A>G SNPs from VCF")
-
+    which_dictionary = {"+" : t_c, "-" : a_g}
     infile = pysam.AlignmentFile(bampath, "rb")
     outfile = pysam.AlignmentFile(outfile_path, "wb", template=infile)
 
@@ -24,19 +24,18 @@ def snpmask_bams(bampath, vcfpath, outfile_path):
                 #if they're aligned to the plus strand we care about T > C mutations
                 #Note that if a read has no conversions, HISAT3N will assign it a value of YZ = +
                 #This isn't a problem for this because we're only trying to adjust reads with "conversion" on it 
-                if read.get_tag('YZ') == "+":
-                    snp_dictionary = t_c
-                elif read.get_tag('YZ') == "-":
-                    snp_dictionary = a_g
+                # if read.get_tag('YZ') == "+":
+                #     snp_dictionary = t_c
+                # elif read.get_tag('YZ') == "-":
+                #     snp_dictionary = a_g
+                snp_dictionary = which_dictionary[read.get_tag('YZ')]
                 #now we're going to use the snp dictionary to see if the read positions have anything mapping
                 #in the snp dictionary
                 current_chrom = set(snp_dictionary[read.reference_name])
                 read_positions = read.get_aligned_pairs(matches_only = True,with_seq = True)
                 read_mismatches = set([x[1] + 1 for x in read_positions if x[2].islower()]) #convert to 1 based
                 if current_chrom.intersection(read_mismatches):
-                    new_yf = conversion_tag
-                    for i in range(len(current_chrom.intersection(read_mismatches))):
-                        new_yf = new_yf - 1
+                    new_yf = conversion_tag - len(current_chrom.intersection(read_mismatches)
                     read.set_tag('Yf',new_yf)
                     outfile.write(read)         
             else:
