@@ -5,12 +5,14 @@ import argparse
 import pickle
 
 
-def snpmask_bams(bampath, vcfpath):
+def snpmask_bams(bampath, vcfpath, outfile_path):
     print("Getting T>C and A>G SNPs from VCF")
     a_g, t_c = get_snp_dictionaries(vcfpath)
     print("Done getting T>C and A>G SNPs from VCF")
 
     infile = pysam.AlignmentFile(bampath, "rb")
+    outfile = pysam.AlignmentFile(outfile_path, "wb", template=infile)
+
     print("Starting to parse BAM file")
     for i, read in enumerate(infile):
         #first we're only interested in reads that have a conversion on them
@@ -108,6 +110,10 @@ def main():
 
     outfile_path = os.path.splitext(bampath)[0] + ".snpmasked.bam"
     outfile = pysam.AlignmentFile(outfile_path, "wb", template=infile)
+    
+    result = snpmask_bams(bampath, vcfpath, outfile_path)
+
+    return result
 
 
 
