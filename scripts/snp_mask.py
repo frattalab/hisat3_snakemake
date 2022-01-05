@@ -39,8 +39,7 @@ def snpmask_bams(bampath, vcfpath, outfile_path):
                     outfile.write(read)         
             else:
                 outfile.write(read)
-        if i % 1_000_000 == 0:
-            print (f'{i} reads read')
+        print (f'{i} reads read')
     outfile.close()
     print("Success!")
     return 0
