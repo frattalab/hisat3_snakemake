@@ -15,6 +15,8 @@ def snpmask_bams(bampath, vcfpath, outfile_path):
 
     print("Starting to parse BAM file")
     for i, read in enumerate(infile):
+        if i >1000 and i % 1_000_000 == 0:
+            print (f'{i} reads read')
         #first we're only interested in reads that have a conversion on them
         if read.has_tag('Yf'):
             conversion_tag = read.get_tag("Yf")
@@ -39,7 +41,7 @@ def snpmask_bams(bampath, vcfpath, outfile_path):
                     outfile.write(read)         
             else:
                 outfile.write(read)
-        print (f'{i} reads read')
+
     outfile.close()
     print("Success!")
     return 0
