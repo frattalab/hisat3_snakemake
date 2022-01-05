@@ -35,7 +35,7 @@ def snpmask_bams(bampath, vcfpath, outfile_path):
                 read_positions = read.get_aligned_pairs(matches_only = True,with_seq = True)
                 read_mismatches = set([x[1] + 1 for x in read_positions if x[2].islower()]) #convert to 1 based
                 if current_chrom.intersection(read_mismatches):
-                    new_yf = conversion_tag - len(current_chrom.intersection(read_mismatches)
+                    new_yf = conversion_tag - len(current_chrom.intersection(read_mismatches))
                     read.set_tag('Yf',new_yf)
                     outfile.write(read)         
             else:
