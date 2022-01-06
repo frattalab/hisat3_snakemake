@@ -3,43 +3,52 @@ import os
 import pysam
 import argparse
 import pickle
+from multiprocessing import Pool
 
 
-def snpmask_bams(bampath, vcfpath, outfile_path):
+def snpmask_bams(bampath, vcfpath, chrom):
     print("Getting T>C and A>G SNPs from VCF")
     a_g, t_c = get_snp_dictionaries(vcfpath)
     print("Done getting T>C and A>G SNPs from VCF")
-    which_dictionary = {"+" : t_c, "-" : a_g}
+    which_dictionary = {"+" : t_c[chrom], "-" : a_g[chrom]} #changing processing to be by chromosome
+    
     infile = pysam.AlignmentFile(bampath, "rb")
+    
+    outfile_path = os.path.splitext(bampath)[0] + chrom + ".snpmasked.bam"
+
     outfile = pysam.AlignmentFile(outfile_path, "wb", template=infile)
 
+    reads_on_chrom = infile.fetch(chrom)
+
     print("Starting to parse BAM file")
-    for i, read in enumerate(infile):
+    for i, read in enumerate(reads_on_chrom):
         if i > 100 and i % 1_000_000 == 0:
             print (f'{i} reads read')
-        #first we're only interested in reads that have a conversion on them
-        if read.has_tag('Yf'):
-            conversion_tag = read.get_tag("Yf")
-            if conversion_tag >= 1:
-                #if they're aligned to the plus strand we care about T > C mutations
-                #Note that if a read has no conversions, HISAT3N will assign it a value of YZ = +
-                #This isn't a problem for this because we're only trying to adjust reads with "conversion" on it 
-                # if read.get_tag('YZ') == "+":
-                #     snp_dictionary = t_c
-                # elif read.get_tag('YZ') == "-":
-                #     snp_dictionary = a_g
-                snp_dictionary = which_dictionary[read.get_tag('YZ')]
-                #now we're going to use the snp dictionary to see if the read positions have anything mapping
-                #in the snp dictionary
-                current_chrom = set(snp_dictionary[read.reference_name])
-                read_positions = read.get_aligned_pairs(matches_only = True,with_seq = True)
-                read_mismatches = set([x[1] + 1 for x in read_positions if x[2].islower()]) #convert to 1 based
-                if current_chrom.intersection(read_mismatches):
-                    new_yf = conversion_tag - len(current_chrom.intersection(read_mismatches))
-                    read.set_tag('Yf',new_yf)
-                    outfile.write(read)         
-            else:
-                outfile.write(read)
+        #i don't want reads mapped to the weird contigs so first check that the read is mapping to a chrom in the vcf
+        if read.reference_name in a_g.keys() and read.reference_name in t_c.keys():
+            #first we're only interested in reads that have a conversion on them
+            if read.has_tag('Yf'):
+                conversion_tag = read.get_tag("Yf")
+                if conversion_tag >= 1:
+                    #if they're aligned to the plus strand we care about T > C mutations
+                    #Note that if a read has no conversions, HISAT3N will assign it a value of YZ = +
+                    #This isn't a problem for this because we're only trying to adjust reads with "conversion" on it 
+                    # if read.get_tag('YZ') == "+":
+                    #     snp_dictionary = t_c
+                    # elif read.get_tag('YZ') == "-":
+                    #     snp_dictionary = a_g
+                    snp_dictionary = which_dictionary[read.get_tag('YZ')]
+                    #now we're going to use the snp dictionary to see if the read positions have anything mapping
+                    #in the snp dictionary
+                    current_chrom = set(snp_dictionary)
+                    read_positions = read.get_aligned_pairs(matches_only = True,with_seq = True)                    
+                    read_mismatches = set([x[1] + 1 for x in read_positions if x[2].islower()]) #convert to 1 based
+                    if current_chrom.intersection(read_mismatches):
+                        new_yf = conversion_tag - len(current_chrom.intersection(read_mismatches))
+                        read.set_tag('Yf',new_yf)
+                        outfile.write(read)         
+                else:
+                    outfile.write(read)
 
     outfile.close()
     print("Success!")
@@ -100,45 +109,33 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-b", "--bam")
     parser.add_argument("-v", "--vcf")
+    parser.add_argument("-c", "--cpu")
+
     args = parser.parse_args()
 
     bampath = args.bam
     vcfpath = args.vcf
+    cpu = int(args.cpu)
 
 
-    infile = pysam.AlignmentFile(bampath, "rb")
+    #only normal chromosomes
+    chroms = ["chr" + str(x+1) for x in range(22)]
+    chroms.append("chrX")
+    chroms.append("chrY")
+    chroms.append("chrM")
 
-    outfile_path = os.path.splitext(bampath)[0] + ".snpmasked.bam"
-    outfile = pysam.AlignmentFile(outfile_path, "wb", template=infile)
     
-    result = snpmask_bams(bampath, vcfpath, outfile_path)
+    pool = Pool(processes=cpu)
+    for x in range(len(chroms)):
+        pool.apply_async(snpmask_bams,(bampath,vcfpath,chroms[x]))
+    #countReads(chroms[x],bamfh)
+    pool.close()
+    pool.join()
+    
 
-    return result
+    return 0
 
 
 if __name__ == "__main__":
     main()
-
-# reads_parsed = []
-# #go through all the SNPs in the vcf file
-# for r in records:
-#     #first check that the SNP is relevant for this - e.g. either a A > G or a T > C
-#     if (s.alleles[0] == 'T' and s.alleles[1] == 'C') | (s.alleles[0] == 'A' and s.alleles[1] == 'G') :
-#         coverage = infile.count_coverage(contig = r.chrom, start = r.start,stop = r.stop)
-#         #now check if there's any coverage at that location
-#         if(sum([x[0] for x in coverage]) > 0 ):
-#             #if there's coverage - get all the reads that overlap to that location with fetch
-#             overlapping_reads = infile.fetch(r.chrom, r.start, r.stop)
-#             for o in overlapping_reads:
-#                 #now for the reads that actually overlap that position (e.g. not just spliced reads)
-#                 if o.get_overlap(r.start, r.stop) > 0:
-#                     #fix the Yf tag - which contains the number of characteristic mismatches
-#                     new_yf = o.get_tag('Yf') - 1
-#                     outfile.write(o)
-#                     reads_parsed.append(o.query_name)
-
-
-bampath = "testing.bam"
-vcfpath = "/SAN/vyplab/vyplab_reference_genomes/wtc11_vcf/wtc11.vcf.gz"
-
 
