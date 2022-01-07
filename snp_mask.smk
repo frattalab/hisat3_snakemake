@@ -2,13 +2,7 @@ import os
 configfile: "config/config.yaml"
 cluster_config: "config/cluster.yaml"
 include: "helpers.py"
-# RULE ORDER DIRECTIVE
-# if paired end, use the paired end rule to run, if single end use the single end rule to run
-if config['end_type'] == "pe":
-	ruleorder: run_hisat3_pe > run_hisat3_se
-else:
-	ruleorder: run_hisat3_se > run_hisat3_pe
-    
+
 #make sure the output folder exists before running anything
 hisat_outdir = get_output_dir(config["project_top_level"], config['histat3n_output_folder'])
 os.system("mkdir -p {0}".format(hisat_outdir))
