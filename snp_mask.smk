@@ -52,7 +52,7 @@ rule merge_chromosomes:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        expand(hisat_outdir + "{name}.sorted{chr}.snpmasked.bam", name = SAMPLE_NAMES,chromosome=chr_list)
+        expand(hisat_outdir + "{name}.sorted{chr}.snpmasked.bam", name = SAMPLE_NAMES,chr=chr_list)
     output:
         hisat_outdir + "{name}.snpmasked.bam"
     shell:
