@@ -6,13 +6,11 @@ import pickle
 from multiprocessing import Pool
 
 
-def snpmask_bams(bampath, vcfpath, chrom):
-    print("Getting T>C and A>G SNPs from VCF")
-    a_g, t_c = get_snp_dictionaries(vcfpath)
-    print("Done getting T>C and A>G SNPs from VCF")
+def snpmask_bams(bampath, a_g, t_c, chrom, cpu):
+
     which_dictionary = {"+" : t_c[chrom], "-" : a_g[chrom]} #changing processing to be by chromosome
     
-    infile = pysam.AlignmentFile(bampath, "rb")
+    infile = pysam.AlignmentFile(bampath, "rb",thread = cpu)
     
     outfile_path = os.path.splitext(bampath)[0] + chrom + ".snpmasked.bam"
 
@@ -20,7 +18,7 @@ def snpmask_bams(bampath, vcfpath, chrom):
 
     reads_on_chrom = infile.fetch(chrom)
 
-    print("Starting to parse BAM file")
+    print(f'Starting to parse chromosome {chrom}')
     for i, read in enumerate(reads_on_chrom):
         if i > 100 and i % 1_000_000 == 0:
             print (f'{i} reads read')
@@ -51,7 +49,7 @@ def snpmask_bams(bampath, vcfpath, chrom):
                     outfile.write(read)
 
     outfile.close()
-    print("Success!")
+    print(f'Finished reading {chrom}')
     return 0
 
 
@@ -99,7 +97,7 @@ def get_snp_dictionaries(vcfpath):
         with open(t_c_pickle, 'rb') as handle:
             t_c = pickle.load(handle)
     else:
-        print("no pickles found - pickleing the relevant SNPs from the VCF")
+        print("no pickles found - pickling the relevant SNPs from the VCF")
         build_dictionaries(vcfpath)
         a_g, t_c = get_snp_dictionaries(vcfpath)
     return(a_g, t_c)
@@ -117,17 +115,20 @@ def main():
     vcfpath = args.vcf
     cpu = int(args.cpu)
 
+    print("Getting T>C and A>G SNPs from VCF")
+    a_g_dict, t_c_dict = get_snp_dictionaries(vcfpath)
+    
+    print("Done getting T>C and A>G SNPs from VCF")
 
     #only normal chromosomes
-    chroms = ["chr" + str(x+1) for x in range(22)]
-    chroms.append("chrX")
-    chroms.append("chrY")
-    chroms.append("chrM")
 
+
+    chroms = set(a_g_dict.keys()).union(set(t_c_dict.keys()))
     
     pool = Pool(processes=cpu)
     for x in range(len(chroms)):
-        pool.apply_async(snpmask_bams,(bampath,vcfpath,chroms[x]))
+        snpmask_bams(bampath, a_g, t_c, chrom, cpu)
+        pool.apply_async(snpmask_bams,(bampath,a_g_dict, t_c_dict,chroms[x]),cpu)
     #countReads(chroms[x],bamfh)
     pool.close()
     pool.join()
