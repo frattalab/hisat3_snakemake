@@ -37,7 +37,7 @@ rule call_snp_mask:
     input:
         hisat_outdir + "{name}.sorted.bam",
     output:
-        dataout = temp(["{{hisat_outdir}}{{name}}.sorted{}.snpmasked.bam".format(i) for i in chr_list]))
+        dataout = temp(["{{hisat_outdir}}{{name}}.sorted{}.snpmasked.bam".format(i) for i in chr_list])
     params:
         vcf = config['vcf_path'] #TODO this could be altered to take a VCF per sample in the future
     threads:
