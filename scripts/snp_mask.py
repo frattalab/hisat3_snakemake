@@ -129,8 +129,9 @@ def main():
     chroms.append("chrX")
     chroms.append("chrY")
     chroms.append("chrM")
-    
+
     pool = Pool(processes=cpu)
+    print(f'{cpu} this many cpu!')
     for x in range(len(chroms)):
         pool.apply_async(snpmask_bams,(bampath,a_g_dict, t_c_dict,chroms[x]),cpu)
     #countReads(chroms[x],bamfh)
