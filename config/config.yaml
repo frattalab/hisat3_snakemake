@@ -4,22 +4,28 @@
 # end_type: "se"
 # strandedness: "F"
 
-# sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/foursu_full_experiment_eight_four.csv
-sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/foursu_full_experiment.csv
+sampleCSVpath: /SAN/vyplab/alb_projects/data/bdnf_4su_i3lmn/n_of_four/sample_sheet_fullN.csv
+#sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/foursu_full_experiment.csv
 #master directory in which output from individual rules is stored (within individual subdirectories, unless overriden below)
 # project_top_level:  /SAN/vyplab/NYGC_ALSFTD/temporary_4su/
 project_top_level: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/
 end_type: "pe"
-strandedness: "RF"
+# CHECK INFER_EXPERIMENT RESULTS
+# "1++,1--,2+-,2-+" is likely FR/fr-secondstrand
+# "1+-,1-+,2++,2--" is likely RF/fr-firststrand
+strandedness: "FR"
 #strandedness: "F"
 #below you can specify the names of rulesubdirectories
 # if the provided path string is RELATIVE, the string will be joined with project_top_level to form the output directory path
 # if the provided path string is ABSOLUTE, the output for the given rule will be stored in the provided string (NOT WITHIN project_top_level)
 # In practice leaving as relative defaults is best option...
-fastp_trimmed_output_folder: fastp_trimmed_whoops/
-merged_fastq_folder: fastp_trimmed_whoops/
+# fastp_trimmed_output_folder: fastp_trimmed_whoops/
+# merged_fastq_folder: fastp_trimmed_whoops/
+fastp_trimmed_output_folder: fastp_trimmed/
+merged_fastq_folder: merged_fastqs/
 
-histat3n_output_folder: hisat3n/
+# histat3n_output_folder: hisat3n/
+histat3n_output_folder: HISAT3N/
 
 #fasta: /SAN/vyplab/vyplab_reference_genomes/sequence/mouse/gencode/GRCm38.primary_assembly.genome.fa
 #GENOME_DIR = "/SAN/vyplab/vyplab_reference_genomes/hisat-3n/mouse/raw"
@@ -30,3 +36,5 @@ GENOME_DIR: /SAN/vyplab/vyplab_reference_genomes/hisat-3n/human/raw
 
 
 bedGraphToolPath: /SAN/vyplab/alb_projects/tools/bedGraphToBigWig
+
+vcf_path: /SAN/vyplab/vyplab_reference_genomes/wtc11_vcf/wtc11.vcf.gz

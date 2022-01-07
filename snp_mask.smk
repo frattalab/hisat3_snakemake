@@ -13,7 +13,6 @@ else:
 hisat_outdir = get_output_dir(config["project_top_level"], config['histat3n_output_folder'])
 os.system("mkdir -p {0}".format(hisat_outdir))
 
-merged_outdir = get_output_dir(config['project_top_level'], config['merged_fastq_folder'])
 
 SAMPLES = pd.read_csv(config["sampleCSVpath"], sep = ",")
 SAMPLES = SAMPLES.replace(np.nan, '', regex=True)
@@ -23,32 +22,43 @@ SAMPLE_NAMES = SAMPLES['sample_name'].tolist()
 GENOME_DIR = config['GENOME_DIR']
 GENOME_FA = config['fasta']
 
-bedGraph = '/SAN/vyplab/alb_projects/tools/bedGraphToBigWig'
+chr_list = ['chr1', 'chr2', 'chr3', 'chr4', 'chr5', 
+'chr6', 'chr7', 'chr8', 'chr9', 'chr10', 'chr11', 'chr12', 
+'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19', 
+'chr20', 'chr21', 'chr22', 'chrX', 'chrY', 'chrM']
 
 rule all_call:
     input:
-        expand(hisat_outdir + "{name}.vcf", name = SAMPLE_NAMES)
+        expand(hisat_outdir + "{name}.snpmasked.bam", name = SAMPLE_NAMES)
 
-MapQ = 20
-
-rule call_samtools_mpileup:
+rule call_snp_mask:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        hisat_outdir + "{name}.sorted.bam"
+        hisat_outdir + "{name}.sorted.bam",
     output:
-        hisat_outdir + "{name}.vcf"
+        temp(dataout= ["{{hisat_outdir}}{{name}}.sorted{}.snpmasked.bam".format(i) for i in chr_list])
     params:
-        referenceFile = GENOME_FA
+        vcf = config['vcf_path'] #TODO this could be altered to take a VCF per sample in the future
+    threads:
+        4
     shell:
-    """
-    samtools mpileup -B -A -f {params.referenceFile} {input} | varscan pileup2snp  --strand-which filter 0 \
-    --output-vcf \
-    --min-var-freq {params.minVarFreq} \
-    --min-coverage 20 \
-    --variants 1
+        """
+        echo "Processing {input} file..."
+        python3 scripts/snp_mask.py --bam {input} --vcf {params.vcf} --cpu {threads}
     """
 
+rule merge_chromosomes:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        expand(hisat_outdir + "{name}.sorted{chr}.snpmasked.bam", name = SAMPLE_NAMES,chromosome=chr_list)
+    output:
+        hisat_outdir + "{name}.snpmasked.bam"
+    shell:
+    """
+    samtools merge -o {output} {input}
+    """
 
 # rule snp_mask_bams:
 #     input:
