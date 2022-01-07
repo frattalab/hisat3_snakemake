@@ -19,6 +19,7 @@ def snpmask_bams(bampath, a_g, t_c, chrom, cpu):
     reads_on_chrom = infile.fetch(chrom)
 
     print(f'Starting to parse chromosome {chrom}')
+
     for i, read in enumerate(reads_on_chrom):
         if i > 100 and i % 1_000_000 == 0:
             print (f'{i} reads read')
@@ -131,9 +132,10 @@ def main():
     chroms.append("chrM")
 
     pool = Pool(processes=cpu)
-    print(f'{cpu} this many cpu!')
+    print(f'{cpu}: this many cpu!')
+
     for x in range(len(chroms)):
-        pool.apply_async(snpmask_bams,(bampath,a_g_dict, t_c_dict,chroms[x]),cpu)
+        pool.apply_async(snpmask_bams,(bampath,a_g_dict, t_c_dict,chroms[x],cpu))
     #countReads(chroms[x],bamfh)
     pool.close()
     pool.join()
