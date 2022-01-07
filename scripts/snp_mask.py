@@ -6,11 +6,11 @@ import pickle
 from multiprocessing import Pool
 
 
-def snpmask_bams(bampath, a_g, t_c, chrom, cpu):
+def snpmask_bams(bampath, a_g, t_c, chrom):
 
     which_dictionary = {"+" : t_c[chrom], "-" : a_g[chrom]} #changing processing to be by chromosome
     
-    infile = pysam.AlignmentFile(bampath, "rb",thread = cpu)
+    infile = pysam.AlignmentFile(bampath, "rb")
     
     outfile_path = os.path.splitext(bampath)[0] + chrom + ".snpmasked.bam"
 
@@ -135,7 +135,7 @@ def main():
     print(f'{cpu}: this many cpu!')
 
     for x in range(len(chroms)):
-        pool.apply_async(snpmask_bams,(bampath,a_g_dict, t_c_dict,chroms[x],cpu))
+        pool.apply_async(snpmask_bams,(bampath,a_g_dict, t_c_dict,chroms[x]))
     #countReads(chroms[x],bamfh)
     pool.close()
     pool.join()
