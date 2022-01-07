@@ -31,7 +31,7 @@ rule call_snp_mask:
     input:
         hisat_outdir + "{name}.sorted.bam"
     output:
-        expand(hisat_outdir + "{{name}}].sorted{chr}.snpmasked.bam",chr=chr_list)
+        temp(expand(hisat_outdir + "{{name}}].sorted{chr}.snpmasked.bam",chr=chr_list))
     params:
         vcf = config['vcf_path'] #TODO this could be altered to take a VCF per sample in the future
     threads:
@@ -46,7 +46,7 @@ rule merge_chromosomes:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        expand(hisat_outdir + "{name}.sorted{chr}.snpmasked.bam", name = SAMPLE_NAMES,chr=chr_list)
+        expand(hisat_outdir + "{{name}}].sorted{chr}.snpmasked.bam",chr=chr_list)
     output:
         hisat_outdir + "{name}.snpmasked.bam"
     shell:
