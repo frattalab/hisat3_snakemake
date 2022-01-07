@@ -27,7 +27,7 @@ rule all_call:
 
 rule call_snp_mask:
     wildcard_constraints:
-        sample="|".join(SAMPLE_NAMES)
+        name="|".join(SAMPLE_NAMES)
     input:
         hisat_outdir + "{name}.sorted.bam",
     output:
