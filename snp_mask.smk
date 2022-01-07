@@ -56,9 +56,9 @@ rule merge_chromosomes:
     output:
         hisat_outdir + "{name}.snpmasked.bam"
     shell:
-    """
-    samtools merge -o {output} {input}
-    """
+        """
+        samtools merge -o {output} {input}
+        """
 
 # rule snp_mask_bams:
 #     input:
