@@ -123,7 +123,12 @@ def main():
     #only normal chromosomes
 
 
-    chroms = set(a_g_dict.keys()).union(set(t_c_dict.keys()))
+    # chroms = set(a_g_dict.keys()).union(set(t_c_dict.keys()))
+    #only normal chromosomes
+    chroms = ["chr" + str(x+1) for x in range(22)]
+    chroms.append("chrX")
+    chroms.append("chrY")
+    chroms.append("chrM")
     
     pool = Pool(processes=cpu)
     for x in range(len(chroms)):
