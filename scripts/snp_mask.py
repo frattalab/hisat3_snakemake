@@ -127,11 +127,12 @@ def main():
     
     pool = Pool(processes=cpu)
     for x in range(len(chroms)):
-        snpmask_bams(bampath, a_g, t_c, chrom, cpu)
         pool.apply_async(snpmask_bams,(bampath,a_g_dict, t_c_dict,chroms[x]),cpu)
     #countReads(chroms[x],bamfh)
     pool.close()
     pool.join()
+    
+    print('All chromosomes masked')
     
 
     return 0
