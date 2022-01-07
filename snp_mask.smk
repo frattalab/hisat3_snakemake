@@ -44,7 +44,8 @@ rule call_snp_mask:
 
 rule merge_chromosomes:
     wildcard_constraints:
-        sample="|".join(SAMPLE_NAMES)
+        name="|".join(SAMPLE_NAMES)
+        chr="|".join(chr_list)
     input:
         expand(hisat_outdir + "{{name}}].sorted{chr}.snpmasked.bam",chr=chr_list)
     output:
