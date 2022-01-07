@@ -2,7 +2,7 @@ __default__:
     submission_string: " "
     h_vmem:    16G
     tmem:   16G
-    h_rt: 12:00:00
+    h_rt: 08:00:00
 run_hisat3_pe:
     submission_string: "-pe smp 4 -R y"
     h_vmem:    6G
@@ -43,3 +43,8 @@ split_conversion:
     h_vmem:    8G
     tmem:   8G
     h_rt: 12:00:00
+call_snp_mask:
+    submission_string: "-pe smp 4 -R y"
+    h_vmem:    2G
+    tmem:   2G
+    h_rt: 05:00:00
