@@ -29,9 +29,9 @@ rule call_snp_mask:
     wildcard_constraints:
         name="|".join(SAMPLE_NAMES)
     input:
-        hisat_outdir + "{name}.sorted.bam",
+        hisat_outdir + "{name}.sorted.bam"
     output:
-        expand(hisat_outdir + "{name}.sorted{chr}.snpmasked.bam",chr=chr_list)
+        expand(hisat_outdir + "{{name}}].sorted{chr}.snpmasked.bam",chr=chr_list)
     params:
         vcf = config['vcf_path'] #TODO this could be altered to take a VCF per sample in the future
     threads:
