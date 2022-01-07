@@ -47,7 +47,7 @@ rule merge_chromosomes:
         name="|".join(SAMPLE_NAMES),
         chr="|".join(chr_list)
     input:
-        expand(hisat_outdir + "{{name}}].sorted{chr}.snpmasked.bam",chr=chr_list)
+        expand(hisat_outdir + "{{name}}.sorted{chr}.snpmasked.bam",chr=chr_list)
     output:
         hisat_outdir + "{name}.snpmasked.bam"
     shell:
