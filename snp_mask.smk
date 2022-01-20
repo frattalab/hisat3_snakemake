@@ -23,7 +23,9 @@ chr_list = ['chr1', 'chr2', 'chr3', 'chr4', 'chr5',
 
 rule all_call:
     input:
-        expand(hisat_outdir + "{name}.snpmasked.bam", name = SAMPLE_NAMES)
+        expand(hisat_outdir + "{name}.snpmasked.bam", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "{name}.snpmasked.bam.bai", name = SAMPLE_NAMES)
+
 
 rule call_snp_mask:
     wildcard_constraints:
@@ -55,6 +57,17 @@ rule merge_chromosomes:
         samtools merge {output} {input}
         """
 
+rule index_merged:
+    wildcard_constraints:
+        name="|".join(SAMPLE_NAMES),
+    input:
+        hisat_outdir + "{name}.snpmasked.bam"
+    output:
+        hisat_outdir + "{name}.snpmasked.bam.bai"
+    shell:
+        """
+        samtools index {input}
+        """
 # rule snp_mask_bams:
 #     input:
 #         bam = hisat_outdir + "{name}.sorted.bam",
