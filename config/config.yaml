@@ -4,11 +4,11 @@
 # end_type: "se"
 # strandedness: "F"
 
-sampleCSVpath: /SAN/vyplab/alb_projects/data/bdnf_4su_i3lmn/n_of_four/sample_sheet_fullN.csv
-#sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/foursu_full_experiment.csv
+#sampleCSVpath: /SAN/vyplab/alb_projects/data/bdnf_4su_i3lmn/n_of_four/sample_sheet_fullN.csv
+sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/foursu_full_experiment.csv
 #master directory in which output from individual rules is stored (within individual subdirectories, unless overriden below)
 # project_top_level:  /SAN/vyplab/NYGC_ALSFTD/temporary_4su/
-project_top_level: /SAN/vyplab/alb_projects/data/bdnf_4su_i3lmn/n_of_four/analysis/
+project_top_level: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/
 end_type: "pe"
 # CHECK INFER_EXPERIMENT RESULTS
 # "1++,1--,2+-,2-+" is likely FR/fr-secondstrand
