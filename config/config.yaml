@@ -8,7 +8,7 @@
 sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/foursu_full_experiment.csv
 #master directory in which output from individual rules is stored (within individual subdirectories, unless overriden below)
 # project_top_level:  /SAN/vyplab/NYGC_ALSFTD/temporary_4su/
-project_top_level: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/
+project_top_level: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/new_analysis/
 end_type: "pe"
 # CHECK INFER_EXPERIMENT RESULTS
 # "1++,1--,2+-,2-+" is likely FR/fr-secondstrand
@@ -22,9 +22,8 @@ strandedness: "FR"
 # fastp_trimmed_output_folder: fastp_trimmed_whoops/
 # merged_fastq_folder: fastp_trimmed_whoops/
 fastp_trimmed_output_folder: fastp_trimmed/
-merged_fastq_folder: merged_fastqs/
+merged_fastq_folder: fastp_trimmed/
 
-# histat3n_output_folder: hisat3n/
 histat3n_output_folder: HISAT3N/
 
 #fasta: /SAN/vyplab/vyplab_reference_genomes/sequence/mouse/gencode/GRCm38.primary_assembly.genome.fa
