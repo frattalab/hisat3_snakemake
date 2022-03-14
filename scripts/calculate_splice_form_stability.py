@@ -4,6 +4,7 @@ import pysam
 import argparse
 from pathlib import Path
 import pyranges
+import pandas as pd
 
 
 def collect_stats(infile,sj_info):
@@ -87,8 +88,8 @@ def process_bam(infile,regions):
     
 
     samfile = pysam.AlignmentFile(infile, "rb")
+    print('Processing Junctions:')
     for index, row in junctions.iterrows():
-        print('Processing Junction Named:')
         print(row['Name'])
         jnc = [row['Chromosome'], row['Start'],row['End']]
         conversion_stats = collect_stats(samfile,jnc)
