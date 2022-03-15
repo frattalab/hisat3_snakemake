@@ -56,7 +56,7 @@ rule merge_chromosomes:
         """
         samtools merge {output} {input}
         """
-
+        
 rule index_merged:
     wildcard_constraints:
         name="|".join(SAMPLE_NAMES),
@@ -68,6 +68,7 @@ rule index_merged:
         """
         samtools index {input}
         """
+
 # rule snp_mask_bams:
 #     input:
 #         bam = hisat_outdir + "{name}.sorted.bam",
