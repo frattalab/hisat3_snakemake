@@ -5,7 +5,7 @@ include: "helpers.py"
 
 #make sure the output folder exists before running anything
 hisat_outdir = get_output_dir(config["project_top_level"], config['histat3n_output_folder'])
-mdcalleddir = hisat_outdir[:-1] + "_callmd_POTATO/"
+mdcalleddir = hisat_outdir[:-1] + "_callmd/"
 os.system("mkdir -p {0}".format(mdcalleddir))
 
 
