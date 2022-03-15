@@ -83,10 +83,12 @@ def collect_stats(infile,sj_info):
     return rows
 
 def process_bam(infile,regions):
+    print("HI - I'm actually here int he script")
     rows = []
+    print("Hi - I read the ranges!")
     junctions = pyranges.readers.read_bed(regions, as_df=True, nrows=None)
     
-
+    print("Hi I'm about to start reading in the file...")
     samfile = pysam.AlignmentFile(infile, "rb")
     print('Processing Junctions:')
     for index, row in junctions.iterrows():
