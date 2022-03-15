@@ -21,8 +21,8 @@ GENOME_FA = config['fasta']
 
 rule all_call:
     input:
-        expand(hisat_outdir + "{name}.mdcalled.bam", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "{name}.mdcalled.bam.bai", name = SAMPLE_NAMES)
+        expand(mdcalleddir + "{name}.mdcalled.bam", name = SAMPLE_NAMES),
+        expand(mdcalleddir + "{name}.mdcalled.bam.bai", name = SAMPLE_NAMES)
 
 
 rule call_md_tag:
