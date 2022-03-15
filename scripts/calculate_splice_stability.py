@@ -103,6 +103,7 @@ def process_bam(infile,regions):
     return df
 
 def main():
+    print("HI HERE I AM - in main...nice")
     parser = argparse.ArgumentParser()
     parser.add_argument("-b", "--bam")
     parser.add_argument("-r", "--regions")
