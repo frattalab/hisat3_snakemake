@@ -7,12 +7,12 @@ import pyranges
 import pandas as pd
 
 
-def collect_stats(infile,sj_info):
+def collect_stats(infile,sjintervals):
     spliced = 0
     t_coverage = 0
     spliced_coverted = 0
     
-    sjintervals = set([(sj_info[1],sj_info[2])])
+    
 
     for read in infile.fetch(sj_info[0]):
         
@@ -82,19 +82,18 @@ def collect_stats(infile,sj_info):
 
     return rows
 
-def process_bam(infile,regions):
-    print("HI - I'm actually here in the script")
+def process_bam(infile,regions,chr):
     rows = []
-    print("Hi - I read the ranges!")
     junctions = pyranges.readers.read_bed(regions, as_df=True, nrows=None)
     
     print("Hi I'm about to start reading in the file...")
     samfile = pysam.AlignmentFile(infile, "rb")
-    print('Processing Junctions:')
+    print('Processing Junctions:',flush=True)
     for index, row in junctions.iterrows():
-        print(row['Name'])
+        print(row['Name'],flush=True)
         jnc = [row['Chromosome'], row['Start'],row['End']]
-        conversion_stats = collect_stats(samfile,jnc)
+        sjintervals = set([(jnc[1],jnc[2])])
+        conversion_stats = collect_stats(samfile,sjintervals)
         junc_conv = conversion_stats + jnc + [row['Name']]
         rows.append(junc_conv)
 
@@ -103,11 +102,11 @@ def process_bam(infile,regions):
     return df
 
 def main():
-    print("HI HERE I AM - in main...nice")
     parser = argparse.ArgumentParser()
     parser.add_argument("-b", "--bam")
     parser.add_argument("-r", "--regions")
     parser.add_argument("-o", "--outputfolder")
+    parser.add_argument("-c", "--cpu")
 
 
     args = parser.parse_args()
@@ -118,7 +117,23 @@ def main():
 
     basenameBam = Path(bampath).stem
     basenameBed = Path(bedpath).stem
+    
+    junctions = pyranges.readers.read_bed(bedpath, as_df=True, nrows=None)
+    chroms = junctions['Chromosome']
+    # chroms = set(a_g_dict.keys()).union(set(t_c_dict.keys()))
+    #only normal chromosomes
+    chroms = ["chr" + str(x+1) for x in range(22)]
+    chroms.append("chrX")
+    chroms.append("chrY")
+    chroms.append("chrM")
 
+    pool = Pool(processes=cpu)
+
+    for x in range(len(chroms)):
+        pool.apply_async(snpmask_bams,(bampath,a_g_dict, t_c_dict,chroms[x]))
+    #countReads(chroms[x],bamfh)
+    pool.close()
+    pool.join()
     outputfile = os.path.join(outfolder, basenameBam + "_" + basenameBed + "_" + "spliced_counts.csv")
     
     counts = process_bam(bampath,bedpath)
