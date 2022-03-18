@@ -5,6 +5,7 @@ import argparse
 from pathlib import Path
 import pyranges
 import pandas as pd
+import multiprocessing
 
 
 def collect_stats(infile,sjintervals):
@@ -82,13 +83,14 @@ def collect_stats(infile,sjintervals):
 
     return rows
 
-def process_bam(infile,regions,chr):
+def process_bam(infile,regions,q):
     rows = []
-    junctions = pyranges.readers.read_bed(regions, as_df=True, nrows=None)
     
-    print("Hi I'm about to start reading in the file...")
+
     samfile = pysam.AlignmentFile(infile, "rb")
+
     print('Processing Junctions:',flush=True)
+    
     for index, row in junctions.iterrows():
         print(row['Name'],flush=True)
         jnc = [row['Chromosome'], row['Start'],row['End']]
@@ -114,26 +116,31 @@ def main():
     bampath = args.bam
     bedpath = args.regions
     outfolder = args.outputfolder
+    cpu = int(args.cpu)
 
     basenameBam = Path(bampath).stem
     basenameBed = Path(bedpath).stem
     
     junctions = pyranges.readers.read_bed(bedpath, as_df=True, nrows=None)
-    chroms = junctions['Chromosome']
-    # chroms = set(a_g_dict.keys()).union(set(t_c_dict.keys()))
-    #only normal chromosomes
-    chroms = ["chr" + str(x+1) for x in range(22)]
-    chroms.append("chrX")
-    chroms.append("chrY")
-    chroms.append("chrM")
+    n = junctions.shape[0] // cpu  #chunk row size
+    list_df = [junctions[i:i+n] for i in range(0,junctions.shape[0],n)]
 
-    pool = Pool(processes=cpu)
 
-    for x in range(len(chroms)):
-        pool.apply_async(snpmask_bams,(bampath,a_g_dict, t_c_dict,chroms[x]))
-    #countReads(chroms[x],bamfh)
-    pool.close()
-    pool.join()
+    q = multiprocessing.Queue()
+
+    for i in range(len(list_df)):
+        print("horse")
+        p = multiprocessing.Process(target=process_bam, args=(string_array[i], q,))
+        p.start()
+
+    # Do anything else you need in here
+
+    time=np.empty(2,dtype='object')
+    signal=np.empty(2,dtype='object')
+    for i in range(2):
+        time[i], signal[i] = q.get() # Returns output or blocks until ready
+        # Process my output
+
     outputfile = os.path.join(outfolder, basenameBam + "_" + basenameBed + "_" + "spliced_counts.csv")
     
     counts = process_bam(bampath,bedpath)
