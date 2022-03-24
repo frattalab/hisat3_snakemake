@@ -5,15 +5,16 @@ import argparse
 from pathlib import Path
 import pyranges
 import pandas as pd
-import multiprocessing
+from multiprocessing import Pool, cpu_count
+from timeit import default_timer as timer
 
 
-def collect_stats(infile,sjintervals):
+def collect_stats(infile,sj_info):
     spliced = 0
     t_coverage = 0
     spliced_coverted = 0
-    
-    
+
+    sjintervals = set([(sj_info[1],sj_info[2])])
 
     for read in infile.fetch(sj_info[0]):
         
@@ -83,7 +84,7 @@ def collect_stats(infile,sjintervals):
 
     return rows
 
-def process_bam(infile,regions,q):
+def process_bam(junctions,infile):
     rows = []
     
 
@@ -94,8 +95,9 @@ def process_bam(infile,regions,q):
     for index, row in junctions.iterrows():
         print(row['Name'],flush=True)
         jnc = [row['Chromosome'], row['Start'],row['End']]
-        sjintervals = set([(jnc[1],jnc[2])])
-        conversion_stats = collect_stats(samfile,sjintervals)
+
+        conversion_stats = collect_stats(samfile,jnc)
+        
         junc_conv = conversion_stats + jnc + [row['Name']]
         rows.append(junc_conv)
 
@@ -108,43 +110,39 @@ def main():
     parser.add_argument("-b", "--bam")
     parser.add_argument("-r", "--regions")
     parser.add_argument("-o", "--outputfolder")
-    parser.add_argument("-c", "--cpu")
-
 
     args = parser.parse_args()
 
     bampath = args.bam
     bedpath = args.regions
     outfolder = args.outputfolder
-    cpu = int(args.cpu)
+
 
     basenameBam = Path(bampath).stem
     basenameBed = Path(bedpath).stem
     
     junctions = pyranges.readers.read_bed(bedpath, as_df=True, nrows=None)
-    n = junctions.shape[0] // cpu  #chunk row size
+    n = junctions.shape[0] // cpu_count() #chunk row size
     list_df = [junctions[i:i+n] for i in range(0,junctions.shape[0],n)]
+    input_file = [bampath] * len(list_df) 
+    junctions_bamtuple = tuple(zip(list_df,input_file))
 
+    start = timer()
 
-    q = multiprocessing.Queue()
+    print(f'starting computations on {cpu_count()} cores')
 
-    for i in range(len(list_df)):
-        print("horse")
-        p = multiprocessing.Process(target=process_bam, args=(string_array[i], q,))
-        p.start()
+    
 
-    # Do anything else you need in here
+    with Pool() as pool:
+        res = pool.starmap(process_bam, junctions_bamtuple)
+        counts = pd.concat(res)
+        print(df)
 
-    time=np.empty(2,dtype='object')
-    signal=np.empty(2,dtype='object')
-    for i in range(2):
-        time[i], signal[i] = q.get() # Returns output or blocks until ready
-        # Process my output
-
+    end = timer()
+    print(f'elapsed time: {end - start}')
+    
     outputfile = os.path.join(outfolder, basenameBam + "_" + basenameBed + "_" + "spliced_counts.csv")
     
-    counts = process_bam(bampath,bedpath)
-
 
     counts.to_csv(outputfile,index = False)
 
