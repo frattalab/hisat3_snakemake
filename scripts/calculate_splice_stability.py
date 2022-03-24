@@ -136,7 +136,7 @@ def main():
     with Pool() as pool:
         res = pool.starmap(process_bam, junctions_bamtuple)
         counts = pd.concat(res)
-        print(df)
+
 
     end = timer()
     print(f'elapsed time: {end - start}')
