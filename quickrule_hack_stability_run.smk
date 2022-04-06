@@ -8,7 +8,7 @@ project_folder =  "/SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/new
 stability_output = "/SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/new_analysis/spliced_read_stability_HISAT3N_snpmasked/"
 bam_suffix = '.snpmasked.bam.bai'
 
-bam_dir = '/SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/new_analysis/'
+bam_dir = '/SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/new_analysis/HISAT3N/'
 
 SAMPLE_NAMES = [f.replace(bam_suffix, "") for f in os.listdir(bam_dir) if f.endswith(bam_suffix)]
 
