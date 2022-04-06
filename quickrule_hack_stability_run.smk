@@ -19,7 +19,7 @@ print(SAMPLE_NAMES)
 
 rule all:
     input:
-        expand(stability_output + ".snpmasked_test_stability_input_spliced_counts.csv", sample = SAMPLE_NAMES)
+        expand(stability_output + "{sample}.snpmasked_test_stability_input_spliced_counts.csv", sample = SAMPLE_NAMES)
 
 
 rule stability_splice_count:
