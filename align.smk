@@ -17,9 +17,10 @@ merged_outdir = get_output_dir(config['project_top_level'], config['merged_fastq
 
 SAMPLES = pd.read_csv(config["sampleCSVpath"], sep = ",")
 SAMPLES = SAMPLES.replace(np.nan, '', regex=True)
+
+SAMPLE_NAMES = SAMPLES['sample_name'].tolist()
 print(SAMPLES)
 print(len(SAMPLES))
-SAMPLE_NAMES = SAMPLES['sample_name'].tolist()
 
 GENOME_DIR = config['GENOME_DIR']
 GENOME_FA = config['fasta']
@@ -28,7 +29,7 @@ bedGraph = '/SAN/vyplab/alb_projects/tools/bedGraphToBigWig'
 
 rule all_hisat3n:
     input:
-        expand(hisat_outdir + "{name}.conversion.tsv.gz", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "{name}.conversion.tsv.fake.bed.gz.tbi", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.sorted.bam.bai", name = SAMPLE_NAMES),
         # expand(hisat_outdir + "{name}.sorted.tagged.bam", name = SAMPLE_NAMES),
         # expand(hisat_outdir + "{name}.sorted.tagged.bam.bai", name = SAMPLE_NAMES)
@@ -115,7 +116,7 @@ rule conversion_table:
     input:
         hisat_outdir + "{name}.sorted.sam"
     output:
-        hisat_outdir + "{name}.conversion.tsv"
+        temp(hisat_outdir + "{name}.conversion.tsv")
     params:
         genomeFA = GENOME_FA,
         outputPrefix = os.path.join(hisat_outdir + "{name}.conversion.tsv"),
@@ -131,16 +132,41 @@ rule conversion_table:
         --base-change {params.baseChange} \
         --threads {threads}
         """
-rule zip_conversion_table:
+
+rule fix_conversion_table:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
         hisat_outdir + "{name}.conversion.tsv"
     output:
-        hisat_outdir + "{name}.conversion.tsv.gz"
+        hisat_outdir + "{name}.conversion.fake.bed"
     shell:
         """
-        gzip {input}
+        awk 'BEGIN { FS="\t"; OFS="\t" } { $2=$2 "\t" $2 } 1'{input} > {output}     
+        """
+
+rule zip_conversion_table:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        hisat_outdir + "{name}.conversion.fake.bed"
+    output:
+        hisat_outdir + "{name}.conversion.fake.bed.gz"
+    shell:
+        """
+        bgzip {input}
+        """
+
+rule tabix_conversion_table:
+    wildcard_constraints:
+        sample="|".join(SAMPLE_NAMES)
+    input:
+        hisat_outdir + "{name}.conversion.fake.bed.gz"
+    output:
+        hisat_outdir + "{name}.conversion.tsv.fake.bed.gz.tbi"
+    shell:
+        """
+        tabix -p bed {input} -S 1 {output}
         """
 
 rule sort_bams:
