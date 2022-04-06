@@ -12,6 +12,7 @@ bam_dir = '/SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/new_analysi
 
 SAMPLE_NAMES = [f.replace(bam_suffix, "") for f in os.listdir(bam_dir) if f.endswith(bam_suffix)]
 
+bed_file = "/SAN/vyplab/alb_projects/pipelines/hisat3_snakemake/test_stability_input.bed"
 bed_name  = os.path.splitext(os.path.basename(bed_file))[0]
 
 print(SAMPLE_NAMES)
@@ -28,7 +29,7 @@ rule stability_splice_count:
     output:
         stability_output + "{sample}.snpmasked_test_stability_input_spliced_counts.csv"
     params:
-        bed = "/SAN/vyplab/alb_projects/pipelines/hisat3_snakemake/test_stability_input.bed"
+        bed = bed_file
     threads:
         8
     shell:
