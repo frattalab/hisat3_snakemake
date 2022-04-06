@@ -45,9 +45,9 @@ split_conversion:
     h_rt: 12:00:00
 call_snp_mask:
     submission_string: "-pe smp 4 -R y"
-    h_vmem:    6G
-    tmem:   5G
-    h_rt: 10:00:00
+    h_vmem:    10G
+    tmem:   10G
+    h_rt: 24:00:00
 call_md_tag:
     submission_string: "-pe smp 4 -R y"
     h_vmem:    4G
