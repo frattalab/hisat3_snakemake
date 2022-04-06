@@ -17,7 +17,8 @@ merged_outdir = get_output_dir(config['project_top_level'], config['merged_fastq
 
 SAMPLES = pd.read_csv(config["sampleCSVpath"], sep = ",")
 SAMPLES = SAMPLES.replace(np.nan, '', regex=True)
-
+print(SAMPLES)
+print(len(SAMPLES))
 SAMPLE_NAMES = SAMPLES['sample_name'].tolist()
 
 GENOME_DIR = config['GENOME_DIR']
