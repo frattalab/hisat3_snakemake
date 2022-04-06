@@ -110,12 +110,16 @@ def main():
     parser.add_argument("-b", "--bam")
     parser.add_argument("-r", "--regions")
     parser.add_argument("-o", "--outputfolder")
+    parser.add_argument("-t", "--threads")
+
 
     args = parser.parse_args()
 
     bampath = args.bam
     bedpath = args.regions
     outfolder = args.outputfolder
+    threads = int(args.threads)
+
 
 
     basenameBam = Path(bampath).stem
