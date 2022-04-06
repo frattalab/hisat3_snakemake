@@ -8,6 +8,11 @@ run_hisat3_pe:
     h_vmem:    6G
     tmem:   6G
     h_rt: 90:00:00
+stability_splice_count:
+    submission_string: "-pe smp 8 -R y"
+    h_vmem:    3G
+    tmem:   3G
+    h_rt: 20:00:00
 run_hisat3_se:
     submission_string: " "
     h_vmem:    24G
