@@ -126,14 +126,14 @@ def main():
     basenameBed = Path(bedpath).stem
     
     junctions = pyranges.readers.read_bed(bedpath, as_df=True, nrows=None)
-    n = junctions.shape[0] // cpu_count() #chunk row size
+    n = junctions.shape[0] // threads #chunk row size
     list_df = [junctions[i:i+n] for i in range(0,junctions.shape[0],n)]
     input_file = [bampath] * len(list_df) 
     junctions_bamtuple = tuple(zip(list_df,input_file))
 
     start = timer()
 
-    print(f'starting computations on {cpu_count()} cores')
+    print(f'starting computations on {threads} cores')
 
     
 
