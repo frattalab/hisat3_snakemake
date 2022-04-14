@@ -37,5 +37,6 @@ rule stability_splice_count:
         python3 /SAN/vyplab/alb_projects/pipelines/hisat3_snakemake/scripts/calculate_splice_stability.py \
         -b {input} \
         -r {params.bed} \
-        -o /SAN/vyplab/alb_projects/pipelines/hisat3_snakemake -t 8
+        -o {stability_output} \
+        -t 8
         """
