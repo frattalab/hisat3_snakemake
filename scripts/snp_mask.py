@@ -25,7 +25,7 @@ def snpmask_bams(bampath, a_g, t_c, chrom):
             print (f'{i} reads read')
         #i don't want reads mapped to the weird contigs so first check that the read is mapping to a chrom in the vcf
         if read.reference_name in a_g.keys() and read.reference_name in t_c.keys():
-            #first we're only interested in reads that have a conversion on them
+            #first we're only interested in updating reads that have a conversion on them
             if read.has_tag('Yf'):
                 conversion_tag = read.get_tag("Yf")
                 if conversion_tag >= 1:
@@ -50,6 +50,8 @@ def snpmask_bams(bampath, a_g, t_c, chrom):
                     outfile.write(read)
                 else:
                     outfile.write(read)
+            else:
+                outfile.write(read)
 
     outfile.close()
     print(f'Finished reading {chrom}')

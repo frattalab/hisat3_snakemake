@@ -22,6 +22,8 @@ else
     RUN_NAME=$1
 fi
 
+cp submissions/202204061618/_config.yaml config/config.yaml
+
 FOLDER=submissions/$(date +"%Y%m%d%H%M")
 
 mkdir -p ${FOLDER}
