@@ -35,14 +35,14 @@ rule split_converted:
         outCon = hisat_outdir + "split_conversions/" +  "{name}.sorted.convertedreads.bam",
         outUNCon = hisat_outdir + "split_conversions/" +  "{name}.sorted.UNconvertedreads.bam"
     params:
-        outputPrefixCon = os.path.join(hisat_outdir + "{name}.sorted.convertedreads.bam"),
-        outputPrefixUNCon = os.path.join(hisat_outdir + "{name}.sorted.UNconvertedreads.bam")
+        outputPrefix = os.path.join(hisat_outdir + "split_conversions/"),
+        minimum_conversions = 2
     threads:
         4
     shell:
         """
         echo "Processing {input} file..."
-        python3 /SAN/vyplab/alb_projects/pipelines/hisat3_snakemake/scripts/split_conversions.py -b {input} -m 2
-        mv {params.outputPrefixCon} {output.outCon}
-        mv {params.outputPrefixUNCon} {output.outUNCon}
+        python3 /SAN/vyplab/alb_projects/pipelines/hisat3_snakemake/scripts/split_conversions.py -b {input} \
+        -m {params.minimum_conversions} \
+        -o {params.outputPrefix}
         """
