@@ -23,7 +23,10 @@ GENOME_FA = config['fasta']
 rule all_split:
     input:
         expand(hisat_outdir + "split_conversions/" +  "{name}.snpmasked.convertedreads.bam", name = SAMPLE_NAMES),
-        expand(hisat_outdir + "split_conversions/" +  "{name}.snpmasked.UNconvertedreads.bam", name = SAMPLE_NAMES)
+        expand(hisat_outdir + "split_conversions/" +  "{name}.snpmasked.UNconvertedreads.bam", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "split_conversions/" +  "{name}.snpmasked.convertedreads.bam.bai",name = SAMPLE_NAMES),
+        expand(hisat_outdir + "split_conversions/" +  "{name}.snpmasked.UNconvertedreads.bam.bai",name = SAMPLE_NAMES)
+
 
 
 rule split_converted:
