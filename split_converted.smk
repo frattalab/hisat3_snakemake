@@ -39,7 +39,7 @@ rule split_converted:
         outUNCon = hisat_outdir + "split_conversions/" +  "{name}.snpmasked.UNconvertedreads.bam"
     params:
         outputPrefix = os.path.join(hisat_outdir + "split_conversions/"),
-        minimum_conversions = 2
+        minimum_conversions = 1
     threads:
         4
     shell:
