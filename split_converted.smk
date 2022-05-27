@@ -30,7 +30,7 @@ rule split_converted:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        hisat_outdir + "{name}.snpmasked.bam"
+        hisat_outdir + "{name}.bam"
     output:
         outCon = hisat_outdir + "split_conversions/" +  "{name}.sorted.convertedreads.bam",
         outUNCon = hisat_outdir + "split_conversions/" +  "{name}.sorted.UNconvertedreads.bam"
