@@ -30,10 +30,10 @@ rule split_converted:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
-        hisat_outdir + "{name}.bam"
+        hisat_outdir + "{name}.snpmasked.bam"
     output:
-        outCon = hisat_outdir + "split_conversions/" +  "{name}.sorted.convertedreads.bam",
-        outUNCon = hisat_outdir + "split_conversions/" +  "{name}.sorted.UNconvertedreads.bam"
+        outCon = hisat_outdir + "split_conversions/" +  "{name}.snpmasked.convertedreads.bam",
+        outUNCon = hisat_outdir + "split_conversions/" +  "{name}.snpmasked.UNconvertedreads.bam"
     params:
         outputPrefix = os.path.join(hisat_outdir + "split_conversions/"),
         minimum_conversions = 2
@@ -45,4 +45,19 @@ rule split_converted:
         python3 /SAN/vyplab/alb_projects/pipelines/hisat3_snakemake/scripts/split_conversions.py -b {input} \
         -m {params.minimum_conversions} \
         -o {params.outputPrefix}
+        """
+
+rule index_split:
+    wildcard_constraints:
+        name="|".join(SAMPLE_NAMES),
+    input:
+        outCon = hisat_outdir + "split_conversions/" +  "{name}.snpmasked.convertedreads.bam",
+        outUNCon = hisat_outdir + "split_conversions/" +  "{name}.snpmasked.UNconvertedreads.bam"
+    output:
+        hisat_outdir + "split_conversions/" +  "{name}.snpmasked.convertedreads.bam.bai",
+        hisat_outdir + "split_conversions/" +  "{name}.snpmasked.UNconvertedreads.bam.bai"
+    shell:
+        """
+        samtools index {input.outCon}
+        samtools index {input.outUNCon}
         """
