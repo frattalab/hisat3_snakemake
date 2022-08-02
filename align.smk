@@ -142,7 +142,7 @@ rule fix_conversion_table:
         hisat_outdir + "{name}.conversion.fake.bed"
     shell:
         """
-        awk 'BEGIN { FS="\t"; OFS="\t" } { $2=$2 "\t" $2 } 1'{input} > {output}     
+        source scripts/fakeBedAwk.sh {input} {output}
         """
 
 rule zip_conversion_table:
