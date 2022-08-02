@@ -2,7 +2,7 @@
 # project_top_level:   /SAN/vyplab/NYGC_ALSFTD/temporary_bdnf/
 
 # end_type: "se"
-# strandedness: "F"
+# strandedness: "F"/SAN/vyplab/alb_projects/data/4su_full_ward_tdp_kd_ipsc/fastp_trimmed/
 #####
 #sampleCSVpath: /SAN/vyplab/alb_projects/data/bdnf_4su_i3lmn/n_of_four/sample_sheet_fullN.csv
 sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_full_ward_tdp_kd_ipsc/ward_time_course_samples.csv
