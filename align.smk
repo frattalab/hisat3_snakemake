@@ -110,6 +110,8 @@ rule sort_histat:
         mkdir -p $t
         samtools sort {input} -o {output} -T $t
         """
+    priority: 1
+
 rule conversion_table:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
@@ -132,6 +134,30 @@ rule conversion_table:
         --base-change {params.baseChange} \
         --threads {threads}
         """
+    priority: 2
+
+rule sort_bams:
+    input:
+        hisat_outdir + "{name}.sorted.sam"
+    output:
+        hisat_outdir + "{name}.sorted.bam"
+    shell:
+        """
+        samtools view -S --threads 4 -b {input} > {output} 
+        """
+    priority: 3
+
+rule index_bams:
+    input:
+        hisat_outdir + "{name}.sorted.bam"
+    output:
+        hisat_outdir + "{name}.sorted.bam.bai"
+    threads:
+        4
+    shell:
+        """
+        samtools index {input} 
+        """
 
 rule fix_conversion_table:
     wildcard_constraints:
@@ -144,6 +170,8 @@ rule fix_conversion_table:
         """
         source scripts/fakeBedAwk.sh {input} {output}
         """
+    priority: 4
+
 
 rule zip_conversion_table:
     wildcard_constraints:
@@ -156,6 +184,7 @@ rule zip_conversion_table:
         """
         bgzip {input}
         """
+    priority: 5
 
 rule tabix_conversion_table:
     wildcard_constraints:
@@ -169,27 +198,7 @@ rule tabix_conversion_table:
         tabix -p bed {input} -S 1 {output}
         """
 
-rule sort_bams:
-    input:
-        hisat_outdir + "{name}.sorted.sam"
-    output:
-        hisat_outdir + "{name}.sorted.bam"
-    shell:
-        """
-        samtools view -S --threads 4 -b {input} > {output} 
-        """
 
-rule index_bams:
-    input:
-        hisat_outdir + "{name}.sorted.bam"
-    output:
-        hisat_outdir + "{name}.sorted.bam.bai"
-    threads:
-        4
-    shell:
-        """
-        samtools index {input} 
-        """
 
 # rule call_samtools_mpileup:
 #     wildcard_constraints:
