@@ -197,7 +197,7 @@ rule tabix_conversion_table:
         hisat_outdir + "{name}.conversion.tsv.fake.bed.gz.tbi"
     shell:
         """
-        tabix -p bed {input} -S 1 {output}
+        tabix -p bed {input} -S 1
         """
 
 
