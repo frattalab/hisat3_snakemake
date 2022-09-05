@@ -188,13 +188,14 @@ rule zip_conversion_table:
         bgzip {input}
         """
 
+
 rule tabix_conversion_table:
     wildcard_constraints:
         sample="|".join(SAMPLE_NAMES)
     input:
         hisat_outdir + "{name}.conversion.fake.bed.gz"
     output:
-        hisat_outdir + "{name}.conversion.tsv.fake.bed.gz.tbi"
+        hisat_outdir + "{name}.conversion.fake.bed.gz.tbi"
     shell:
         """
         tabix -p bed {input} -S 1
