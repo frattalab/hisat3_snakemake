@@ -29,7 +29,7 @@ bedGraph = '/SAN/vyplab/alb_projects/tools/bedGraphToBigWig'
 
 rule all_hisat3n:
     input:
-        expand(hisat_outdir + "{name}.conversion.tsv.fake.bed.gz.tbi", name = SAMPLE_NAMES),
+        expand(hisat_outdir + "{name}.conversion.fake.bed.gz.tbi", name = SAMPLE_NAMES),
         expand(hisat_outdir + "{name}.sorted.bam.bai", name = SAMPLE_NAMES),
         # expand(hisat_outdir + "{name}.sorted.tagged.bam", name = SAMPLE_NAMES),
         # expand(hisat_outdir + "{name}.sorted.tagged.bam.bai", name = SAMPLE_NAMES)
