@@ -5,9 +5,9 @@ __default__:
     h_rt: 08:00:00
 run_hisat3_pe:
     submission_string: "-pe smp 4 -R y"
-    h_vmem:    6G
-    tmem:   6G
-    h_rt: 90:00:00
+    h_vmem:    12G
+    tmem:   12G
+    h_rt: 72:00:00
 stability_splice_count:
     submission_string: "-pe smp 8 -R y"
     h_vmem:    3G

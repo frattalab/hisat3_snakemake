@@ -24,7 +24,7 @@ strandedness: "FR"
 fastp_trimmed_output_folder: fastp_trimmed/
 merged_fastq_folder: fastp_trimmed/
 
-histat3n_output_folder: HISAT3N/
+histat3n_output_folder: 4SU_full/HISAT3N/
 
 #fasta: /SAN/vyplab/vyplab_reference_genomes/sequence/mouse/gencode/GRCm38.primary_assembly.genome.fa
 #GENOME_DIR = "/SAN/vyplab/vyplab_reference_genomes/hisat-3n/mouse/raw"
