@@ -23,10 +23,10 @@ strandedness: "FR"
 # In practice leaving as relative defaults is best option...
 # fastp_trimmed_output_folder: fastp_trimmed_whoops/
 # merged_fastq_folder: fastp_trimmed_whoops/
-fastp_trimmed_output_folder: 4SU_second_experiment_i3cort/merged_trimmed/
+fastp_trimmed_output_folder: 4SU_second_experiment_i3cort/fastp_trimmed/
 merged_fastq_folder: 4SU_second_experiment_i3cort/merged_trimmed/
 
-histat3n_output_folder: 4SU_second_experiment_i3cort//HISAT3N/
+histat3n_output_folder: 4SU_second_experiment_i3cort/HISAT3N/
 
 #fasta: /SAN/vyplab/vyplab_reference_genomes/sequence/mouse/gencode/GRCm38.primary_assembly.genome.fa
 #GENOME_DIR = "/SAN/vyplab/vyplab_reference_genomes/hisat-3n/mouse/raw"
