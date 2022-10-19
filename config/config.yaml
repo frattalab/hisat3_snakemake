@@ -5,10 +5,12 @@
 # strandedness: "F"/SAN/vyplab/alb_projects/data/4su_full_ward_tdp_kd_ipsc/fastp_trimmed/
 #####
 #sampleCSVpath: /SAN/vyplab/alb_projects/data/bdnf_4su_i3lmn/n_of_four/sample_sheet_fullN.csv
-sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_full_ward_tdp_kd_ipsc/ward_time_course_samples.csv
+# sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_full_ward_tdp_kd_ipsc/ward_time_course_samples.csv
+sampleCSVpath: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/foursu_full_experiment.csv
+
 #master directory in which output from individual rules is stored (within individual subdirectories, unless overriden below)
 # project_top_level:  /SAN/vyplab/alb_projects/data/bdnf_4su_i3lmn/n_of_four/analysis/
-project_top_level: /SAN/vyplab/alb_projects/data/4su_full_ward_tdp_kd_ipsc/
+project_top_level: /SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc
 end_type: "pe"
 # CHECK INFER_EXPERIMENT RESULTS
 # "1++,1--,2+-,2-+" is likely FR/fr-secondstrand
@@ -21,10 +23,10 @@ strandedness: "FR"
 # In practice leaving as relative defaults is best option...
 # fastp_trimmed_output_folder: fastp_trimmed_whoops/
 # merged_fastq_folder: fastp_trimmed_whoops/
-fastp_trimmed_output_folder: fastp_trimmed/
-merged_fastq_folder: fastp_trimmed/
+fastp_trimmed_output_folder: 4SU_second_experiment_i3cort/merged_trimmed/
+merged_fastq_folder: 4SU_second_experiment_i3cort/merged_trimmed/
 
-histat3n_output_folder: 4SU_full/HISAT3N/
+histat3n_output_folder: 4SU_second_experiment_i3cort//HISAT3N/
 
 #fasta: /SAN/vyplab/vyplab_reference_genomes/sequence/mouse/gencode/GRCm38.primary_assembly.genome.fa
 #GENOME_DIR = "/SAN/vyplab/vyplab_reference_genomes/hisat-3n/mouse/raw"
