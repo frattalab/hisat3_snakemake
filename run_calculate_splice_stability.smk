@@ -11,7 +11,7 @@ SAMPLES = [f.replace(bam_suffix, "") for f in os.listdir(INPUT_DIR) if f.endswit
 
 rule all:
     input:
-        expand(OUTPUT_DIR + "{sample}_{basenameBed}_spliced_counts.csv", sample = SAMPLES)
+        expand(OUTPUT_DIR + "{sample}_{{basenameBed}}_spliced_counts.csv", sample = SAMPLES)
 
 
 rule calculate_splice_stability:
