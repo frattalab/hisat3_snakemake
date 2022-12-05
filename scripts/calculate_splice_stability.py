@@ -1,7 +1,4 @@
 __author__ = '@aleighbrown'
-import pyranges as pr
-import pandas as pd
-from pathlib import Path
 
 import pyranges as pr
 import pandas as pd
@@ -127,16 +124,18 @@ def process_bams(bam_file_path,bed_file_path):
                             storage_dict[row.Chromosome][i][2] += conversion_tag
                             storage_dict[row.Chromosome][i][3] += t_coverage
 
-    print(the_bed.df)
+    data = [(k1, k2[0], k2[1], v[0], v[1], v[2], v[3]) for k1 in storage_dict for k2, v in storage_dict[k1].items()]
+
+    df = pd.DataFrame(data, columns=['Chromosome', 'Start', 'End', 'n_spliced_reads', 'n_converted_spliced', 'n_conversions', 'n_possible_conversions'])
+    merged_df = pd.merge(the_bed.df, df, on=['Chromosome','Start','End'], how='left')
                 
-    return storage_dict
+    return merged_dfs
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-b", "--bam")
     parser.add_argument("-r", "--regions")
     parser.add_argument("-o", "--outputfolder")
-    parser.add_argument("-t", "--threads")
 
 
     args = parser.parse_args()
@@ -151,28 +150,7 @@ def main():
     basenameBam = Path(bampath).stem
     basenameBed = Path(bedpath).stem
     
-    #Read the bed file
-    the_bed = pr.read_bed(bedpath)
-
-    junctions = pr.PyRanges(filtered_df).merge()
-    n = junctions.shape[0] // threads #chunk row size
-    list_df = [junctions[i:i+n] for i in range(0,junctions.shape[0],n)]
-    input_file = [bampath] * len(list_df) 
-    junctions_bamtuple = tuple(zip(list_df,input_file))
-
-    start = timer()
-
-    print(f'starting computations on {threads} cores')
-
-    
-
-    with Pool() as pool:
-        res = pool.starmap(process_bam, junctions_bamtuple)
-        counts = pd.concat(res)
-
-
-    end = timer()
-    print(f'elapsed time: {end - start}')
+    counts = process_bams(bampath,bedpath)
     
     outputfile = os.path.join(outfolder, basenameBam + "_" + basenameBed + "_" + "spliced_counts.csv")
     
