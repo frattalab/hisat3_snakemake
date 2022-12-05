@@ -1,109 +1,135 @@
 __author__ = '@aleighbrown'
-import os
-import pysam
-import argparse
-from pathlib import Path
-import pyranges
+import pyranges as pr
 import pandas as pd
-from multiprocessing import Pool, cpu_count
-from timeit import default_timer as timer
+from pathlib import Path
 
+import pyranges as pr
+import pandas as pd
+from pathlib import Path
+import pysam
+import sys
+def add_key(dictionary, key, value):
+    if key not in dictionary.keys():
+        dictionary[key] = [value]
+    else:
+        dictionary[key].append(value)
+    return dictionary
 
-def collect_stats(infile,sj_info):
-    spliced = 0
-    t_coverage = 0
+def bed_to_odd_dict(bedpath):
+    infile = open(bedpath, 'r')
+
+    #create an empty dictionary
+    bed_dict = {}
+
+    #loop over every line in the file
+    for line in infile:
+        #split the line into its parts
+        fields = line.strip().split()
+        #extract the chromosome, start and end values
+        chrom = fields[0]
+        start = int(fields[1])
+        end = int(fields[2])
+        #add the chromosome as the key, and the start and end values as the values
+        add_key(bed_dict,chrom, (start, end))
+
+    #close the file
+    infile.close()
+    nested_dict = {key:{value:[0,0,0,0] for value in bed_dict[key]} for key in bed_dict} 
+    
+    return nested_dict
+def splice_junctions(read):
+    """
+    This function takes in a read (SAM/BAM format) and returns a list of 
+    tuples containing the starting and ending positions of all of the 
+    splice junctions in the read.
+    """
+    current_read_pos = read.reference_start 
+    splice_starts = list()
+    splice_ends = list()
+    if read.cigartuples:
+        for i in range(len(read.cigartuples)):
+            if read.cigartuples[i][0] == 0:
+                current_read_pos = current_read_pos + read.cigartuples[i][1]
+            if read.cigartuples[i][0] == 3:
+                splice_starts.append(current_read_pos)
+                current_read_pos = current_read_pos + read.cigartuples[i][1]
+                splice_ends.append(current_read_pos)
+        splice_starts = [s - 1 for s in splice_starts]
+        introns = list(zip(splice_starts,splice_ends))
+
+        return introns
+
+def bed_to_dict(bedpath):
+    infile = open(bedpath, 'r')
+
+    #create an empty dictionary
+    bed_dict = {}
+
+    #loop over every line in the file
+    for line in infile:
+        #split the line into its parts
+        fields = line.strip().split()
+        #extract the chromosome, start and end values
+        chrom = fields[0]
+        start = fields[1]
+        end = fields[2]
+        #add the chromosome as the key, and the start and end values as the values
+        bed_dict[chrom] = (start, end)
+
+    #close the file
+    infile.close()
+    
+
+def get_tag(read):
     spliced_coverted = 0
+    if read.is_reverse:
+        conversions_on = 'A'
+    else:
+        conversions_on = 'T'
 
-    sjintervals = set([(sj_info[1],sj_info[2])])
+    t_coverage = read.get_reference_sequence().upper().count(conversions_on)
 
-    for read in infile.fetch(sj_info[0]):
-        
-        split_read = False
-        intronic_region = []
-        
-        if read.is_unmapped:
-            next
-        else:
-            
-            if read.is_reverse:
-                conversions_on = 'A'
-            else:
-                conversions_on = 'T'
-            
-            try:
-                if 'N' in read.cigarstring:
-                    split_read = True
-            except:
-                print("somehow I'm here")
-                if 'N' in read.cigarstring:
-                    split_read = True
-                    print('now i did that')
+    conversion_tag = read.get_tag("Yf")
 
-            #get all the "splice junctions" in a read
-            if split_read:
-
-                last_read_pos = False
-                index = 0
-                for read_loc, genome_loc in read.get_aligned_pairs():
-
-                    # get_aligned_pairs returns None for the read location when there is a gap(splice)
-                    #so this sets the start of the splice junction to the genomic location if the read loc is none
-                    if read_loc is None and last_read_pos:
-                        start = genome_loc
-
-                    # this is to deal with cases where the SJ overhang is only 1 bp and its on the first base 
-                    if index == 1 and read_loc is None:
-
-                        start = genome_loc
-
-                    elif read_loc and last_read_pos is None:
-
-                        stop = genome_loc  # we are right exclusive ,so this is correct
-
-                        intronic_region.append((start, stop))
-
-                        del start
-                        del stop
-
-                    last_read_pos = read_loc
-                    index +=1
+    if conversion_tag > 0:
+        spliced_coverted = 1
+    else:
+        spliced_converted = 0
 
 
-                if set(intronic_region).intersection(sjintervals):
-
-                    spliced += 1
-
-                    t_coverage += read.get_reference_sequence().upper().count(conversions_on)
-
-                    conversion_tag = read.get_tag("Yf")
-
-                    if conversion_tag > 0:
-                        spliced_coverted += 1
-
-    rows = [spliced,t_coverage,spliced_coverted]
-
-    return rows
-
-def process_bam(junctions,infile):
-    rows = []
+    return spliced_coverted, conversion_tag,t_coverage
     
-
-    samfile = pysam.AlignmentFile(infile, "rb")
-
-    print('Processing Junctions:',flush=True)
+def process_bams(bam_file_path,bed_file_path):
     
-    for index, row in junctions.iterrows():
-        print(row['Name'],flush=True)
-        jnc = [row['Chromosome'], row['Start'],row['End']]
+    bam = pysam.AlignmentFile(bam_file_path, "rb")
+    the_bed = pr.read_bed(bed_file_path)
+    
+    search_range = the_bed.merge()
+    storage_dict = bed_to_odd_dict(bed_file_path)
+    
+    for row in search_range.df.itertuples():
+        set1 = set(storage_dict[row.Chromosome].keys())
 
-        conversion_stats = collect_stats(samfile,jnc)
-        
-        junc_conv = conversion_stats + jnc + [row['Name']]
-        rows.append(junc_conv)
+        for read in  bam.fetch(row.Chromosome,row.Start,row.End):
+            spliced_converted = 0
+            conversion_tag = 0
+            t_coverage = 0 
+            introns = splice_junctions(read)
+            if introns:
+                set2 = set(introns)
+                overlap = set1.intersection(set2)
+                if len(overlap) > 0:
+                    spliced_converted, conversion_tag, t_coverage = get_tag(read)
+                    for i in introns:
+                        if i in storage_dict[row.Chromosome].keys():
+                            storage_dict[row.Chromosome][i][0] += 1
+                            storage_dict[row.Chromosome][i][1] += spliced_converted
+                            storage_dict[row.Chromosome][i][2] += conversion_tag
+                            storage_dict[row.Chromosome][i][3] += t_coverage
 
-    df = pd.DataFrame(rows, columns=["spliced","t_coverage","spliced_coverted","chr","start","end","name"])
-
-    return df
+    print(the_bed.df)
+                
+    return storage_dict
 
 def main():
     parser = argparse.ArgumentParser()
@@ -125,7 +151,10 @@ def main():
     basenameBam = Path(bampath).stem
     basenameBed = Path(bedpath).stem
     
-    junctions = pyranges.readers.read_bed(bedpath, as_df=True, nrows=None)
+    #Read the bed file
+    the_bed = pr.read_bed(bedpath)
+
+    junctions = pr.PyRanges(filtered_df).merge()
     n = junctions.shape[0] // threads #chunk row size
     list_df = [junctions[i:i+n] for i in range(0,junctions.shape[0],n)]
     input_file = [bampath] * len(list_df) 
