@@ -7,7 +7,7 @@ ANNOTATED_JUNCTIONS="/SAN/vyplab/alb_projects/data/4su_full_ward_tdp_kd_ipsc/con
 bam_suffix = '.snpmasked.bam'
 basenameBed = Path(ANNOTATED_JUNCTIONS).stem
 
-SAMPLES = [f in os.listdir(INPUT_DIR) if f.endswith(bam_suffix)]
+SAMPLES = [f for f in os.listdir(INPUT_DIR) if f.endswith(bam_suffix)]
 
 rule all:
     input:
