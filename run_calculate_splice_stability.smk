@@ -7,8 +7,7 @@ ANNOTATED_JUNCTIONS="/SAN/vyplab/alb_projects/data/4su_full_ward_tdp_kd_ipsc/con
 bam_suffix = '.snpmasked.bam'
 basenameBed = Path(ANNOTATED_JUNCTIONS).stem
 
-SAMPLES = [f for f in os.listdir(INPUT_DIR) if f.endswith(bam_suffix)]
-print(SAMPLES)
+SAMPLES = [f.replace(bam_suffix, "") for f in os.listdir(INPUT_DIR) if f.endswith(bam_suffix)]
 
 rule all:
     input:
@@ -23,5 +22,9 @@ rule calculate_splice_stability:
     shell:
         """
         echo {input.bamfile}
-        python3 scripts/calculate_splice_stability.py -b {input.bamfile} -r {ANNOTATED_JUNCTIONS} -o {OUTPUT_DIR}
+        python3 scripts/calculate_splice_stability.py -b {input.bamfile} -r {ANNOTATED_JUNCTIONS} -o {output.outputfile}
         """
+
+
+expected TDP43kd_1_8h_controlHumphreyCorticalNeuron-TDP43KDHumphreyCorticalNeuron_annotated_junctionscryptic_clusters_spliced_counts.csv
+output   TDP43kd_1_8h.snpmasked_controlHumphreyCorticalNeuron-TDP43KDHumphreyCorticalNeuron_annotated_junctionscryptic_clusters_spliced_counts.csv

@@ -7,6 +7,7 @@ import pysam
 import sys
 import argparse
 import os
+
 def add_key(dictionary, key, value):
     if key not in dictionary.keys():
         dictionary[key] = [value]
@@ -137,14 +138,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-b", "--bam")
     parser.add_argument("-r", "--regions")
-    parser.add_argument("-o", "--outputfolder")
+    parser.add_argument("-o", "--outputfile")
 
 
     args = parser.parse_args()
 
     bampath = args.bam
     bedpath = args.regions
-    outfolder = args.outputfolder
+    outputfile = args.outputfile
 
 
 
@@ -153,7 +154,6 @@ def main():
     
     counts = process_bams(bampath,bedpath)
 
-    outputfile = os.path.join(outfolder, basenameBam + "_" + basenameBed + "_" + "spliced_counts.csv")
     
 
     counts.to_csv(outputfile,index = False)
