@@ -22,5 +22,5 @@ rule calculate_splice_stability:
     shell:
         """
         echo {input.bamfile}
-        python3 calculate_splice_stability.py -b {input.bamfile} -r {ANNOTATED_JUNCTIONS} -o {OUTPUT_DIR}
+        python3 scripts/calculate_splice_stability.py -b {input.bamfile} -r {ANNOTATED_JUNCTIONS} -o {OUTPUT_DIR}
         """
