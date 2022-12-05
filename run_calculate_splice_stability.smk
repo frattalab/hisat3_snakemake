@@ -16,7 +16,7 @@ rule all:
 
 rule calculate_splice_stability:
     input:
-        bamfile = INPUT_DIR + "{sample}{bam_suffix}
+        bamfile = INPUT_DIR + "{sample}{bam_suffix}"
     output:
         outputfile = OUTPUT_DIR + "{sample}_{basenameBed}_spliced_counts.csv"
     shell:
