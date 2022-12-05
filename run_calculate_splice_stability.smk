@@ -11,13 +11,13 @@ SAMPLES = [f.replace(bam_suffix, "") for f in os.listdir(INPUT_DIR) if f.endswit
 
 rule all:
     input:
-        expand(OUTPUT_DIR + "{sample}_{{basenameBed}}_spliced_counts.csv", sample = SAMPLES)
+        expand(OUTPUT_DIR + "{sample}" + "_" + basenameBed + "_spliced_counts.csv", sample = SAMPLES)
 
 
 rule calculate_splice_stability:
     input:
         bamfile = INPUT_DIR + "{sample}{bam_suffix}"
     output:
-        outputfile = OUTPUT_DIR + "{sample}_{basenameBed}_spliced_counts.csv"
+        outputfile = OUTPUT_DIR + "{sample}" + "_" + basenameBed + "_spliced_counts.csv"
     shell:
         "python3 calculate_splice_stability.py -b {input.bamfile} -r {ANNOTATED_JUNCTIONS} -o {OUTPUT_DIR}"
