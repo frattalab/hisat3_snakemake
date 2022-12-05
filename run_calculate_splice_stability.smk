@@ -8,6 +8,7 @@ bam_suffix = '.snpmasked.bam'
 basenameBed = Path(ANNOTATED_JUNCTIONS).stem
 
 SAMPLES = [f for f in os.listdir(INPUT_DIR) if f.endswith(bam_suffix)]
+print(SAMPLES)
 
 rule all:
     input:
