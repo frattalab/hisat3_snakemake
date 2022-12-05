@@ -5,6 +5,8 @@ import pandas as pd
 from pathlib import Path
 import pysam
 import sys
+import argparse
+import os
 def add_key(dictionary, key, value):
     if key not in dictionary.keys():
         dictionary[key] = [value]
@@ -129,7 +131,7 @@ def process_bams(bam_file_path,bed_file_path):
     df = pd.DataFrame(data, columns=['Chromosome', 'Start', 'End', 'n_spliced_reads', 'n_converted_spliced', 'n_conversions', 'n_possible_conversions'])
     merged_df = pd.merge(the_bed.df, df, on=['Chromosome','Start','End'], how='left')
                 
-    return merged_dfs
+    return merged_df
 
 def main():
     parser = argparse.ArgumentParser()
@@ -143,7 +145,6 @@ def main():
     bampath = args.bam
     bedpath = args.regions
     outfolder = args.outputfolder
-    threads = int(args.threads)
 
 
 
@@ -151,7 +152,7 @@ def main():
     basenameBed = Path(bedpath).stem
     
     counts = process_bams(bampath,bedpath)
-    
+
     outputfile = os.path.join(outfolder, basenameBam + "_" + basenameBed + "_" + "spliced_counts.csv")
     
 
