@@ -8,7 +8,7 @@ bam_suffix = '.snpmasked.bam'
 basenameBed = Path(ANNOTATED_JUNCTIONS).stem
 
 SAMPLES = [f.replace(bam_suffix, "") for f in os.listdir(INPUT_DIR) if f.endswith(bam_suffix)]
-print(SAMPLES)
+
 rule all:
     input:
         expand(OUTPUT_DIR + "{sample}" + "_" + basenameBed + "_spliced_counts.csv", sample = SAMPLES)
@@ -20,4 +20,7 @@ rule calculate_splice_stability:
     output:
         outputfile = OUTPUT_DIR + "{sample}" + "_" + basenameBed + "_spliced_counts.csv"
     shell:
-        "python3 calculate_splice_stability.py -b {input.bamfile} -r {ANNOTATED_JUNCTIONS} -o {OUTPUT_DIR}"
+        """
+        echo {input.bamfile}
+        python3 calculate_splice_stability.py -b {input.bamfile} -r {ANNOTATED_JUNCTIONS} -o {OUTPUT_DIR}
+        """
