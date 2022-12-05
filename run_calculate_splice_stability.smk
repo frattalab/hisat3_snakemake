@@ -10,7 +10,7 @@ basenameBed = Path(ANNOTATED_JUNCTIONS).stem
 SAMPLES = [f.replace(bam_suffix, "") for f in os.listdir(INPUT_DIR) if f.endswith(bam_suffix)]
 
 rule all:
-    expand(output_dir + "{sample}_{basenameBed}_spliced_counts.csv", sample = SAMPLES),
+    expand(output_dir + "{sample}_{basenameBed}_spliced_counts.csv", sample = SAMPLES)
 
 
 rule calculate_splice_stability:
