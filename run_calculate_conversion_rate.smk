@@ -3,7 +3,7 @@ from pathlib import Path
 
 INPUT_DIR="/SAN/vyplab/alb_projects/data/4su_full_ward_tdp_kd_ipsc/HISAT3N/"
 OUTPUT_DIR="/SAN/vyplab/alb_projects/data/4su_full_ward_tdp_kd_ipsc/HISAT3N_perbase_conv/"
-INPUT_BED="/SAN/vyplab/vyplab_reference_genomes/annotation/human/GRCh38/gencode.v40_3utr_unique.bed"
+INPUT_BED="/SAN/vyplab/vyplab_reference_genomes/annotation/human/GRCh38/gencode.v40_all_introns_unique.bed"
 conversion_suffix = '.conversion.fake.bed.gz'
 
 basenameBed = Path(INPUT_BED).stem
