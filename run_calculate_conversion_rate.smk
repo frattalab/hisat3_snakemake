@@ -12,19 +12,18 @@ SAMPLES = [f.replace(conversion_suffix, "") for f in os.listdir(INPUT_DIR) if f.
 
 rule all:
     input:
-        expand(OUTPUT_DIR + "{sample}" + "_" + basenameBed + "_perbase_cov.csv", sample = SAMPLES)
+        expand(OUTPUT_DIR + "{sample}" + "_" + basenameBed + "_perbase_cov.tsv", sample = SAMPLES)
 
 
 rule calculate_splice_stability:
     input:
         conversion_file = INPUT_DIR + "{sample}" + conversion_suffix
     output:
-        outputfile = OUTPUT_DIR + "{sample}" + "_" + basenameBed + "_perbase_cov.csv"
+        outputfile = OUTPUT_DIR + "{sample}" + "_" + basenameBed + "_perbase_cov.tsv"
     params:
         bed = INPUT_BED
     shell:
         """
         tabix {input.conversion_file}\
-        -R {params.bed} > {output.outputfile}
-
+        -R {params.bed} | mawk -F '\t' '{sum6+=$6; sum8+=$8}END{print sum6,sum8}' > {output.outputfile}
         """
