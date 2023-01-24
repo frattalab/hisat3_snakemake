@@ -17,7 +17,7 @@ rule all:
 
 rule calculate_splice_stability:
     input:
-        bamfile = INPUT_DIR + "{sample}" + conversion_suffix
+        conversion_file = INPUT_DIR + "{sample}" + conversion_suffix
     output:
         outputfile = OUTPUT_DIR + "{sample}" + "_" + basenameBed + "_perbase_cov.csv"
     params:
@@ -25,11 +25,7 @@ rule calculate_splice_stability:
     shell:
         """
         echo {input.bamfile}
-        tabix {input.conversion}\
+        tabix {input.conversion_file}\
         -R {params.bed} > {outputfile}
 
         """
-
-
-# expected TDP43kd_1_8h_controlHumphreyCorticalNeuron-TDP43KDHumphreyCorticalNeuron_annotated_junctionscryptic_clusters_spliced_counts.csv
-# output   TDP43kd_1_8h.snpmasked_controlHumphreyCorticalNeuron-TDP43KDHumphreyCorticalNeuron_annotated_junctionscryptic_clusters_spliced_counts.csv
