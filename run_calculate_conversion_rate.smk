@@ -24,7 +24,6 @@ rule calculate_splice_stability:
         bed = INPUT_BED
     shell:
         """
-        echo {input.bamfile}
         tabix {input.conversion_file}\
         -R {params.bed} > {outputfile}
 
