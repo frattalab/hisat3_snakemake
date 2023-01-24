@@ -25,6 +25,6 @@ rule calculate_splice_stability:
     shell:
         """
         tabix {input.conversion_file}\
-        -R {params.bed} > {outputfile}
+        -R {params.bed} > {output.outputfile}
 
         """
