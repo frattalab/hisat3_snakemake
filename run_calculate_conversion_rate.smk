@@ -21,9 +21,13 @@ rule calculate_splice_stability:
     output:
         outputfile = OUTPUT_DIR + "{sample}" + "_" + basenameBed + "_perbase_cov.tsv"
     params:
-        bed = INPUT_BED
+        bed = INPUT_BED,
+        t_out = OUTPUT_DIR + "{sample}" + "_" + basenameBed + "TEMP_perbase_cov.tsv"
+
     shell:
         """
         tabix {input.conversion_file}\
-        -R {params.bed} | mawk -F '\t' '{{sum6+=$6; sum8+=$8}END{print sum6,sum8}}' > {output.outputfile}
+        -R {params.bed} > {params.t_out}
+        scripts/rateMawk.sh {params.t_out} {output.outputfile}
+        rm {params.t_out}
         """
