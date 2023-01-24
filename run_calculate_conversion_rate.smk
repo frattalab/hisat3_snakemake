@@ -25,5 +25,5 @@ rule calculate_splice_stability:
     shell:
         """
         tabix {input.conversion_file}\
-        -R {params.bed} | mawk -F '\t' '{sum6+=$6; sum8+=$8}END{print sum6,sum8}' > {output.outputfile}
+        -R {params.bed} | mawk -F '\t' '{{sum6+=$6; sum8+=$8}END{print sum6,sum8}}' > {output.outputfile}
         """
