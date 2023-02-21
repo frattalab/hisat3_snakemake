@@ -3,9 +3,9 @@ import pandas as pd
 import argparse
 from pathlib import Path
 
-def convert_to_bed(path_to_csv):
+def convert_to_bed(path_to_csv,outfolder):
     new_bed_name = Path(path_to_csv).stem + 'cryptic_clusters.bed'
-
+    new_bed_name = outfolder + new_bed_name
     df = pd.read_csv(path_to_csv)
     ori_colnames = list(df.columns)
 
@@ -51,12 +51,16 @@ def convert_to_bed(path_to_csv):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--majiq")
+    parser.add_argument("-o", "--outputfolder")
+
 
     args = parser.parse_args()
 
     csv_file = args.majiq
+    outputfolder = args.outputfolder
 
-    convert_to_bed(csv_file)
+
+    convert_to_bed(csv_file,outputfolder)
 
 
 
