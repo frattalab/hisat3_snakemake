@@ -1,9 +1,9 @@
 import os
 from pathlib import Path
 
-INPUT_DIR="/SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/new_analysis/HISAT3N/"
-OUTPUT_DIR="/SAN/vyplab/alb_projects/data/4su_better_design_ward_ipsc/new_analysis/spliced_nomask/"
-ANNOTATED_JUNCTIONS="/SAN/vyplab/alb_projects/data/4su_full_ward_tdp_kd_ipsc/controlHumphreyCorticalNeuron-TDP43KDHumphreyCorticalNeuron_annotated_junctionscryptic_clusters.bed"
+INPUT_DIR="/SAN/vyplab/alb_projects/data/4su_full_ward_tdp_kd_ipsc/HISAT3N/"
+OUTPUT_DIR="/SAN/vyplab/alb_projects/data/4su_full_ward_tdp_kd_ipsc/spliced_read_stability/"
+ANNOTATED_JUNCTIONS="/SAN/vyplab/first_weeks/TDP_CHX_CLONES_GLIA/chx/majiq/delta_psi_voila_tsv/CycloheximideControl-CycloheximideTDP43KD_annotated_junctionscryptic_clusters.bed"
 bam_suffix = '.sorted.bam'
 
 basenameBed = Path(ANNOTATED_JUNCTIONS).stem

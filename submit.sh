@@ -27,7 +27,7 @@ FOLDER=submissions/$(date +"%Y%m%d%H%M")
 mkdir -p ${FOLDER}
 cp config/config.yaml ${FOLDER}/${RUN_NAME}_config.yaml
 
-snakemake -s run_calculate_conversion_rate.smk \
+snakemake -s run_calculate_splice_stability.smk \
 --jobscript cluster_qsub.sh \
 --cluster-config config/cluster.yaml \
 --cluster-sync "qsub -l tmem={cluster.tmem},h_vmem={cluster.h_vmem},h_rt={cluster.h_rt} -o $FOLDER {cluster.submission_string}" \
